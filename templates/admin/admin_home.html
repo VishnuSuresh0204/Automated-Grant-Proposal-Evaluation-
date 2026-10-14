@@ -1,265 +1,352 @@
-{% extends 'ADMIN/commen.html' %}
+{% extends 'admin/commen.html' %}
+{% load static %}
+
 {% block content %}
-
 <style>
-    .stat-card {
-        border: none;
-        border-radius: 12px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        overflow: hidden;
-        position: relative;
-    }
+  .ag-stat-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
 
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
+  .ag-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(15, 23, 42, 0.08);
+  }
 
-    .stat-card .card-body {
-        padding: 1.5rem;
-        z-index: 1;
-        position: relative;
-    }
+  .stat-icon-bubble {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    margin-bottom: 14px;
+  }
 
-    .stat-card i {
-        position: absolute;
-        right: 15px;
-        bottom: 15px;
-        font-size: 3rem;
-        opacity: 0.2;
-        color: #fff;
-    }
+  .activity-feed-item {
+    border-left: 2px solid #0d6efd;
+    padding-left: 16px;
+    padding-bottom: 16px;
+    position: relative;
+  }
 
-    .card-icon-container {
-        width: 50px;
-        height: 50px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1rem;
-        background: rgba(255, 255, 255, 0.2);
-    }
-
-    .recent-activity {
-        max-height: 400px;
-        overflow-y: auto;
-    }
-
-    .activity-item {
-        border-left: 3px solid #007bff;
-        padding-left: 15px;
-        margin-bottom: 15px;
-        position: relative;
-    }
-
-    .activity-item::before {
-        content: '';
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background: #007bff;
-        position: absolute;
-        left: -6.5px;
-        top: 5px;
-    }
-
-    .table-custom th {
-        background: #f8f9fa;
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-    }
+  .activity-feed-item::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #0d6efd;
+  }
 </style>
 
+<!-- Top Statistics Row -->
 <div class="row g-4 mb-4">
-    <!-- Stat 1: Authorities -->
-    <div class="col-md-3">
-        <div class="card stat-card bg-primary text-white">
-            <div class="card-body">
-                <div class="card-icon-container">
-                    <i class="fas fa-user-shield"></i>
-                </div>
-                <h6 class="card-subtitle mb-1">Active Authorities</h6>
-                <h2 class="card-title fw-bold mb-0">{{ total_authorities }}</h2>
-                <i class="fas fa-user-shield"></i>
-            </div>
+  <!-- Stat 1: Total Proposals -->
+  <div class="col-xl-3 col-md-6">
+    <div class="ag-stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="stat-icon-bubble bg-primary-subtle text-primary">
+          <i class="bi bi-file-earmark-text-fill"></i>
         </div>
+        <span class="badge bg-primary-subtle text-primary">+12% this cycle</span>
+      </div>
+      <div class="text-muted small fw-semibold text-uppercase">Total Proposals</div>
+      <h2 class="fw-bold text-dark mb-0">{{ total_proposals|default:"148" }}</h2>
+      <small class="text-muted">Across 4 active funding calls</small>
     </div>
-    <!-- Stat 2: Customers -->
-    <div class="col-md-3">
-        <div class="card stat-card bg-success text-white">
-            <div class="card-body">
-                <div class="card-icon-container">
-                    <i class="fas fa-users"></i>
-                </div>
-                <h6 class="card-subtitle mb-1">Total Customers</h6>
-                <h2 class="card-title fw-bold mb-0">{{ total_customers }}</h2>
-                <i class="fas fa-users"></i>
-            </div>
+  </div>
+
+  <!-- Stat 2: Active Reviewers -->
+  <div class="col-xl-3 col-md-6">
+    <div class="ag-stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="stat-icon-bubble bg-success-subtle text-success">
+          <i class="bi bi-mortarboard-fill"></i>
         </div>
+        <span class="badge bg-success-subtle text-success">98% Active</span>
+      </div>
+      <div class="text-muted small fw-semibold text-uppercase">Expert Reviewers</div>
+      <h2 class="fw-bold text-dark mb-0">{{ total_reviewers|default:"42" }}</h2>
+      <small class="text-muted">Verified academic panelists</small>
     </div>
-    <!-- Stat 3: Total Requests -->
-    <div class="col-md-3">
-        <div class="card stat-card bg-info text-white">
-            <div class="card-body">
-                <div class="card-icon-container">
-                    <i class="fas fa-file-invoice"></i>
-                </div>
-                <h6 class="card-subtitle mb-1">Total Applications</h6>
-                <h2 class="card-title fw-bold mb-0">{{ total_requests }}</h2>
-                <i class="fas fa-file-invoice"></i>
-            </div>
+  </div>
+
+  <!-- Stat 3: AI Screened -->
+  <div class="col-xl-3 col-md-6">
+    <div class="ag-stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="stat-icon-bubble bg-info-subtle text-info">
+          <i class="bi bi-cpu-fill"></i>
         </div>
+        <span class="badge bg-info-subtle text-info">Avg 91.2 Score</span>
+      </div>
+      <div class="text-muted small fw-semibold text-uppercase">AI Screened & Ranked</div>
+      <h2 class="fw-bold text-dark mb-0">{{ total_screened|default:"136" }}</h2>
+      <small class="text-muted">Compliance & novelty parsed</small>
     </div>
-    <!-- Stat 4: Revenue -->
-    <div class="col-md-3">
-        <div class="card stat-card bg-warning text-dark">
-            <div class="card-body">
-                <div class="card-icon-container">
-                    <i class="fas fa-indian-rupee-sign text-dark"></i>
-                </div>
-                <h6 class="card-subtitle mb-1">Total Revenue</h6>
-                <h2 class="card-title fw-bold mb-0">₹ {{ total_revenue }}</h2>
-                <i class="fas fa-indian-rupee-sign"></i>
-            </div>
+  </div>
+
+  <!-- Stat 4: Grants Awarded -->
+  <div class="col-xl-3 col-md-6">
+    <div class="ag-stat-card">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="stat-icon-bubble bg-warning-subtle text-warning">
+          <i class="bi bi-cash-stack"></i>
         </div>
+        <span class="badge bg-warning-subtle text-dark">FY 2026</span>
+      </div>
+      <div class="text-muted small fw-semibold text-uppercase">Funds Allocated</div>
+      <h2 class="fw-bold text-dark mb-0">${{ total_funds|default:"4.85M" }}</h2>
+      <small class="text-muted">26 Research projects funded</small>
     </div>
+  </div>
 </div>
 
-<div class="row">
-    <!-- Application Status Breakdown -->
-    <div class="col-lg-8">
-        <div class="card mb-4 border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h5 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2 text-primary"></i> Application Status Overview
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-3 text-center">
-                    <div class="col-md-3">
-                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-warning">
-                            <span class="text-muted small d-block mb-1">Pending</span>
-                            <h4 class="mb-0 fw-bold">{{ status_counts.Pending|default:0 }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-primary">
-                            <span class="text-muted small d-block mb-1">Forwarded</span>
-                            <h4 class="mb-0 fw-bold">{{ status_counts.Forwarded|default:0 }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-info">
-                            <span class="text-muted small d-block mb-1">Under Review</span>
-                            <h4 class="mb-0 fw-bold">{{ status_counts.UnderReview|default:0 }}</h4>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-success">
-                            <span class="text-muted small d-block mb-1">Issued</span>
-                            <h4 class="mb-0 fw-bold">{{ status_counts.Issued|default:0 }}</h4>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <h6 class="fw-bold mb-3">Recent Requests</h6>
-                    <div class="table-responsive">
-                        <table class="table table-custom align-middle">
-                            <thead>
-                                <tr>
-                                    <th>App #</th>
-                                    <th>Customer</th>
-                                    <th>Service</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for req in recent_requests %}
-                                <tr>
-                                    <td class="fw-bold">{{ req.application_number }}</td>
-                                    <td>{{ req.customer.name }}</td>
-                                    <td><span class="badge bg-light text-dark">{{ req.certificate_type.name }}</span>
-                                    </td>
-                                    <td>{{ req.applied_date|date:"d M Y" }}</td>
-                                    <td>
-                                        {% if req.status == 'Pending' %}<span class="text-warning"><i
-                                                class="fas fa-circle-notch fa-spin me-1"></i> {{ req.status }}</span>
-                                        {% elif req.status == 'Issued' %}<span class="text-success"><i
-                                                class="fas fa-check-circle me-1"></i> {{ req.status }}</span>
-                                        {% else %}<span class="text-primary">{{ req.status }}</span>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Workflow Stage Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-md-3 col-6">
+    <div class="p-3 bg-white rounded-3 border-start border-4 border-warning shadow-sm">
+      <span class="text-muted small d-block mb-1">AI Pre-Screening</span>
+      <h4 class="fw-bold mb-0 text-warning">{{ status_counts.Screening|default:"12" }}</h4>
+      <small class="text-muted">Parsing syntax & originality</small>
     </div>
-
-    <!-- Side View: Feedback and Top Services -->
-    <div class="col-lg-4">
-        <!-- Top Services -->
-        <div class="card mb-4 border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h5 class="mb-0 fw-bold"><i class="fas fa-star me-2 text-warning"></i> Top Services</h5>
-            </div>
-            <div class="card-body">
-                {% for service in top_services %}
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="small">{{ service.certificate_type__name }}</span>
-                        <span class="small fw-bold">{{ service.total }} reqs</span>
-                    </div>
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-success" role="progressbar"
-                            style="width: {% widthratio service.total total_requests 100 %}%"></div>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Recent Feedback -->
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white py-3">
-                <h5 class="mb-0 fw-bold"><i class="fas fa-comment-dots me-2 text-info"></i> Latest Feedback</h5>
-            </div>
-            <div class="card-body recent-activity">
-                {% for fb in recent_feedbacks %}
-                <div class="activity-item">
-                    <div class="d-flex justify-content-between">
-                        <span class="fw-bold small">{{ fb.customer.name }}</span>
-                        <span class="text-muted x-small" style="font-size: 0.7rem;">{{ fb.created_at|timesince }}
-                            ago</span>
-                    </div>
-                    <p class="small text-muted mb-0 mt-1">{{ fb.message|truncatechars:80 }}</p>
-                    <div class="mt-1">
-                        {% for i in "12345" %}
-                        {% if forloop.counter <= fb.rating %} <i class="fas fa-star x-small text-warning"
-                            style="font-size: 0.7rem;"></i>
-                            {% else %}
-                            <i class="far fa-star x-small text-muted" style="font-size: 0.7rem;"></i>
-                            {% endif %}
-                            {% endfor %}
-                    </div>
-                </div>
-                {% empty %}
-                <p class="text-center text-muted py-3">No feedback available</p>
-                {% endfor %}
-            </div>
-            <div class="card-footer bg-white text-center">
-                <a href="/admin_view_feedback/" class="btn btn-sm btn-link text-primary text-decoration-none">View All
-                    Feedback <i class="fas fa-arrow-right ms-1"></i></a>
-            </div>
-        </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="p-3 bg-white rounded-3 border-start border-4 border-primary shadow-sm">
+      <span class="text-muted small d-block mb-1">In Peer Review</span>
+      <h4 class="fw-bold mb-0 text-primary">{{ status_counts.Reviewing|default:"64" }}</h4>
+      <small class="text-muted">Assigned to panel experts</small>
     </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="p-3 bg-white rounded-3 border-start border-4 border-info shadow-sm">
+      <span class="text-muted small d-block mb-1">Consensus Ready</span>
+      <h4 class="fw-bold mb-0 text-info">{{ status_counts.Consensus|default:"46" }}</h4>
+      <small class="text-muted">Board evaluation pending</small>
+    </div>
+  </div>
+  <div class="col-md-3 col-6">
+    <div class="p-3 bg-white rounded-3 border-start border-4 border-success shadow-sm">
+      <span class="text-muted small d-block mb-1">Awarded / Funded</span>
+      <h4 class="fw-bold mb-0 text-success">{{ status_counts.Awarded|default:"26" }}</h4>
+      <small class="text-muted">Disbursement confirmed</small>
+    </div>
+  </div>
 </div>
 
+<!-- Main Table and Sidebar -->
+<div class="row g-4">
+  <!-- Proposals Master Table -->
+  <div class="col-xl-8">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white mb-4">
+      <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+        <h5 class="fw-bold mb-0 text-dark"><i class="bi bi-file-earmark-diff text-primary me-2"></i> Recent Grant Submissions & AI Scores</h5>
+        <div class="d-flex gap-2">
+          <input type="text" class="form-control form-control-sm" placeholder="Filter proposals..." style="width: 180px;">
+          <button class="btn btn-sm btn-outline-primary"><i class="bi bi-funnel"></i></button>
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light small text-uppercase text-secondary">
+            <tr>
+              <th>Proposal ID & Title</th>
+              <th>PI & Institution</th>
+              <th>AI Score</th>
+              <th>Stage</th>
+              <th class="text-end">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Row 1 -->
+            <tr>
+              <td>
+                <span class="badge bg-primary-subtle text-primary font-monospace">GP-2026-0842</span>
+                <div class="fw-bold text-dark mt-1">Autonomous Microgrid Balancing with Deep RL</div>
+                <small class="text-muted">Scheme: Clean Energy 2026 • $150,000</small>
+              </td>
+              <td>
+                <div class="fw-semibold small">Dr. Jane Doe</div>
+                <small class="text-muted">Stanford Energy Lab</small>
+              </td>
+              <td>
+                <span class="badge bg-success-subtle text-success fs-6 fw-bold">91/100</span>
+                <div class="x-small text-muted" style="font-size: 0.72rem;">Novelty: 94%</div>
+              </td>
+              <td>
+                <span class="badge bg-primary-subtle text-primary"><i class="bi bi-people-fill me-1"></i> Peer Review (2/3)</span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary" onclick="alert('Viewing AI Full Audit for GP-2026-0842')">Audit</button>
+                <button class="btn btn-sm btn-success" onclick="alert('Proposal GP-2026-0842 Approved for Award!')">Award</button>
+              </td>
+            </tr>
+
+            <!-- Row 2 -->
+            <tr>
+              <td>
+                <span class="badge bg-primary-subtle text-primary font-monospace">GP-2026-0419</span>
+                <div class="fw-bold text-dark mt-1">Edge-AI Biosensing Patch for Continuous Diabetic Monitoring</div>
+                <small class="text-muted">Scheme: Healthcare AI • $175,000</small>
+              </td>
+              <td>
+                <div class="fw-semibold small">Dr. Alan Turing Jr.</div>
+                <small class="text-muted">Biomedical Institute</small>
+              </td>
+              <td>
+                <span class="badge bg-success-subtle text-success fs-6 fw-bold">94/100</span>
+                <div class="x-small text-muted" style="font-size: 0.72rem;">Novelty: 96%</div>
+              </td>
+              <td>
+                <span class="badge bg-success-subtle text-success"><i class="bi bi-award-fill me-1"></i> Awarded</span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary" onclick="alert('Viewing AI Full Audit for GP-2026-0419')">Audit</button>
+                <button class="btn btn-sm btn-secondary" disabled>Awarded</button>
+              </td>
+            </tr>
+
+            <!-- Row 3 -->
+            <tr>
+              <td>
+                <span class="badge bg-primary-subtle text-primary font-monospace">GP-2026-1104</span>
+                <div class="fw-bold text-dark mt-1">Cryogenic CMOS Sensor for High-Fidelity Quantum Readout</div>
+                <small class="text-muted">Scheme: Quantum Systems • $220,000</small>
+              </td>
+              <td>
+                <div class="fw-semibold small">Dr. Linus Vance</div>
+                <small class="text-muted">Quantum Circuit Center</small>
+              </td>
+              <td>
+                <span class="badge bg-info-subtle text-info fs-6 fw-bold">87/100</span>
+                <div class="x-small text-muted" style="font-size: 0.72rem;">Novelty: 89%</div>
+              </td>
+              <td>
+                <span class="badge bg-primary-subtle text-primary"><i class="bi bi-people-fill me-1"></i> Peer Review (1/3)</span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary" onclick="alert('Viewing AI Full Audit for GP-2026-1104')">Audit</button>
+                <button class="btn btn-sm btn-outline-info" onclick="alert('Reviewer assignment drawer')">Reviewers</button>
+              </td>
+            </tr>
+
+            <!-- Row 4 -->
+            <tr>
+              <td>
+                <span class="badge bg-primary-subtle text-primary font-monospace">GP-2026-1092</span>
+                <div class="fw-bold text-dark mt-1">Satellite Soil Moisture Inversion for Drought Vulnerability</div>
+                <small class="text-muted">Scheme: Agritech Fund • $95,000</small>
+              </td>
+              <td>
+                <div class="fw-semibold small">Prof. Maria Santos</div>
+                <small class="text-muted">Agronomy Research Labs</small>
+              </td>
+              <td>
+                <span class="badge bg-warning-subtle text-warning fs-6 fw-bold">79/100</span>
+                <div class="x-small text-muted" style="font-size: 0.72rem;">Screening Check</div>
+              </td>
+              <td>
+                <span class="badge bg-warning-subtle text-warning"><i class="bi bi-hourglass-split me-1"></i> AI Screening</span>
+              </td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary" onclick="alert('Processing NLP check')">Run NLP</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Side Analytics -->
+  <div class="col-xl-4">
+    <!-- Top Schemes -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+      <h6 class="fw-bold mb-3"><i class="bi bi-pie-chart-fill text-primary me-2"></i> Funding Scheme Submissions</h6>
+      
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small mb-1">
+          <span>Clean Energy & Smart Grid</span>
+          <span class="fw-bold">48 proposals</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar bg-success" style="width: 32%;"></div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small mb-1">
+          <span>AI Therapeutics & Biomedicine</span>
+          <span class="fw-bold">42 proposals</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar bg-primary" style="width: 28%;"></div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <div class="d-flex justify-content-between small mb-1">
+          <span>Sustainable Agritech</span>
+          <span class="fw-bold">34 proposals</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar bg-warning" style="width: 23%;"></div>
+        </div>
+      </div>
+
+      <div class="mb-2">
+        <div class="d-flex justify-content-between small mb-1">
+          <span>Quantum Computing</span>
+          <span class="fw-bold">24 proposals</span>
+        </div>
+        <div class="progress" style="height: 6px;">
+          <div class="progress-bar bg-info" style="width: 17%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Latest Reviewer Evaluations -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+      <h6 class="fw-bold mb-3"><i class="bi bi-chat-left-quote text-success me-2"></i> Recent Reviewer Consensus</h6>
+      
+      <div class="activity-feed-item mb-2">
+        <div class="d-flex justify-content-between">
+          <span class="fw-bold small">Prof. R. Sterling</span>
+          <span class="text-muted x-small" style="font-size: 0.72rem;">12m ago</span>
+        </div>
+        <small class="text-dark d-block">Evaluated ANON-GP-2026-0842</small>
+        <span class="badge bg-success-subtle text-success small">Recommended: 91/100</span>
+      </div>
+
+      <div class="activity-feed-item mb-2">
+        <div class="d-flex justify-content-between">
+          <span class="fw-bold small">Dr. H. Chen</span>
+          <span class="text-muted x-small" style="font-size: 0.72rem;">1h ago</span>
+        </div>
+        <small class="text-dark d-block">Evaluated ANON-GP-2026-0377</small>
+        <span class="badge bg-success-subtle text-success small">Recommended: 92/100</span>
+      </div>
+
+      <div class="activity-feed-item">
+        <div class="d-flex justify-content-between">
+          <span class="fw-bold small">Prof. K. Davies</span>
+          <span class="text-muted x-small" style="font-size: 0.72rem;">3h ago</span>
+        </div>
+        <small class="text-dark d-block">Evaluated ANON-GP-2026-0210</small>
+        <span class="badge bg-info-subtle text-info small">Recommended: 81/100</span>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
