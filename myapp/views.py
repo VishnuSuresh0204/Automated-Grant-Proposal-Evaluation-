@@ -82,7 +82,7 @@ def applicant_registration(request):
             user_type='Applicant'
         )
 
-        Registration.objects.create(
+        ApplicantRegistration.objects.create(
             user=user,
             name=name,
             email=email,
@@ -135,7 +135,7 @@ def reviewer_registration(request):
             user_type='Reviewer'
         )
 
-        Registration.objects.create(
+        ReviewerRegistration.objects.create(
             user=user,
             name=name,
             email=email,
