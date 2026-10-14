@@ -4,16 +4,10 @@ from django.contrib.auth.models import AbstractUser
 
 
 class Login(AbstractUser):
-    USER_TYPE_CHOICES = [
-        ('Applicant', 'Applicant'),
-        ('Reviewer', 'Reviewer'),
-        ('Admin', 'Admin'),
-    ]
+    
 
     user_type = models.CharField(
         max_length=50,
-        choices=USER_TYPE_CHOICES,
-        default='Applicant'
     )
 
     view_pass = models.CharField(
@@ -52,4 +46,5 @@ class Registration(models.Model):
 
     def __str__(self):
         return self.name
+
 
