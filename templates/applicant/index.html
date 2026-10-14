@@ -1,0 +1,400 @@
+{% extends 'commen.html' %}
+{% load static %}
+
+{% block title %}Applicant Dashboard | Automated Grant Proposal Evaluation{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Top Welcome Banner -->
+  <div class="row align-items-center mb-4 g-3">
+    <div class="col-md-7">
+      <div class="d-flex align-items-center gap-3">
+        <div class="ag-brand-icon" style="width: 56px; height: 56px; font-size: 1.6rem;">
+          <i class="bi bi-person-workspace"></i>
+        </div>
+        <div>
+          <h3 class="fw-bold mb-1">
+            Welcome, {% if request.session.username %}{{ request.session.username }}{% else %}Principal Investigator{% endif %}
+          </h3>
+          <p class="text-muted small mb-0">
+            <i class="bi bi-shield-check text-success me-1"></i> Applicant Portal • Monitor AI automated screenings, rubric scores & reviewer feedback
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 text-md-end">
+      <button class="btn btn-gradient-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#newProposalModal">
+        <i class="bi bi-plus-circle me-1"></i> Submit New Proposal
+      </button>
+      <a href="/logout/" class="btn btn-outline-danger ms-2 btn-sm">
+        <i class="bi bi-box-arrow-right"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Metric Overview Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Total Submitted</span>
+          <span class="badge bg-primary-subtle text-primary"><i class="bi bi-folder-check"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1">3</h2>
+        <small class="text-muted">Research Grant Proposals</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Under AI Triage</span>
+          <span class="badge bg-warning-subtle text-warning"><i class="bi bi-cpu"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1 text-warning">1</h2>
+        <small class="text-muted">Automated Pre-Screening</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">In Peer Review</span>
+          <span class="badge bg-info-subtle text-info"><i class="bi bi-people"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1 text-info">1</h2>
+        <small class="text-muted">2 of 3 Reviewers Scored</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Grants Awarded</span>
+          <span class="badge bg-success-subtle text-success"><i class="bi bi-award"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1 text-success">1</h2>
+        <small class="text-muted">$175,000 Total Funding</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Proposals Table -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+          <h5 class="fw-bold mb-0"><i class="bi bi-file-earmark-text text-primary me-2"></i> My Submitted Grant Proposals</h5>
+          <span class="badge bg-light text-dark border">3 Active Submissions</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light small text-uppercase text-secondary">
+              <tr>
+                <th>Proposal ID & Title</th>
+                <th>Scheme</th>
+                <th>AI Composite</th>
+                <th>Status</th>
+                <th class="text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Proposal 1 -->
+              <tr>
+                <td>
+                  <span class="badge bg-primary-subtle text-primary fw-bold font-monospace">GP-2026-0842</span>
+                  <div class="fw-bold text-dark mt-1">Autonomous Microgrid Balancing with Deep Reinforcement Learning</div>
+                  <small class="text-muted"><i class="bi bi-clock me-1"></i> Submitted Oct 02, 2026 • Budget: $150,000</small>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">Clean Energy 2026</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold text-success fs-6">91%</span>
+                    <span class="badge bg-success-subtle text-success small">High Quality</span>
+                  </div>
+                  <small class="text-muted">Novelty: 94%</small>
+                </td>
+                <td>
+                  <span class="badge bg-info-subtle text-info px-2 py-1"><i class="bi bi-people-fill me-1"></i> In Peer Review</span>
+                  <div class="x-small text-muted mt-1" style="font-size: 0.72rem;">2/3 Reviews Done</div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewFeedbackModal">
+                    <i class="bi bi-bar-chart-line me-1"></i> AI Feedback
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Proposal 2 -->
+              <tr>
+                <td>
+                  <span class="badge bg-primary-subtle text-primary fw-bold font-monospace">GP-2026-0419</span>
+                  <div class="fw-bold text-dark mt-1">Edge-AI Biosensing Patch for Continuous Diabetic Monitoring</div>
+                  <small class="text-muted"><i class="bi bi-clock me-1"></i> Submitted Aug 14, 2026 • Budget: $175,000</small>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">Healthcare & AI</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold text-success fs-6">94%</span>
+                    <span class="badge bg-success-subtle text-success small">Exemplary</span>
+                  </div>
+                  <small class="text-muted">Novelty: 96%</small>
+                </td>
+                <td>
+                  <span class="badge bg-success-subtle text-success px-2 py-1"><i class="bi bi-check-circle-fill me-1"></i> Awarded</span>
+                  <div class="x-small text-success mt-1" style="font-size: 0.72rem;">Disbursed FY26</div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#viewFeedbackModal">
+                    <i class="bi bi-file-earmark-check me-1"></i> Award Letter
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Proposal 3 -->
+              <tr>
+                <td>
+                  <span class="badge bg-primary-subtle text-primary fw-bold font-monospace">GP-2026-1092</span>
+                  <div class="fw-bold text-dark mt-1">Satellite Soil Moisture Inversion for Drought Vulnerability</div>
+                  <small class="text-muted"><i class="bi bi-clock me-1"></i> Submitted 2 days ago • Budget: $95,000</small>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">Agritech Fund</span>
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="fw-bold text-warning fs-6">79%</span>
+                    <span class="badge bg-warning-subtle text-warning small">Screening</span>
+                  </div>
+                  <small class="text-muted">Parsing Ledger</small>
+                </td>
+                <td>
+                  <span class="badge bg-warning-subtle text-warning px-2 py-1"><i class="bi bi-hourglass-split me-1"></i> AI Automated Triage</span>
+                  <div class="x-small text-muted mt-1" style="font-size: 0.72rem;">Compliance Verifying</div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-secondary" disabled>
+                    <i class="bi bi-clock me-1"></i> Processing
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side Panel: AI Writing & Guidelines -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-magic text-primary me-2"></i> Automated AI Pre-Scorer Tips</h6>
+        <div class="p-3 bg-light rounded-3 mb-3 border">
+          <div class="fw-semibold small text-primary mb-1"><i class="bi bi-lightbulb-fill text-warning me-1"></i> Improve Novelty Score</div>
+          <p class="x-small text-secondary mb-0" style="font-size: 0.8rem;">
+            Include clear quantitative comparison tables vs existing literature and cite recent 2024-2026 benchmarks.
+          </p>
+        </div>
+        <div class="p-3 bg-light rounded-3 mb-3 border">
+          <div class="fw-semibold small text-success mb-1"><i class="bi bi-cash-stack text-success me-1"></i> Budget Justification Realism</div>
+          <p class="x-small text-secondary mb-0" style="font-size: 0.8rem;">
+            Break down personnel and equipment costs into granular line items; the AI flag triggers if sub-items exceed 40% contingency.
+          </p>
+        </div>
+        <div class="p-3 bg-light rounded-3 border">
+          <div class="fw-semibold small text-info mb-1"><i class="bi bi-graph-up-arrow text-info me-1"></i> Work Packages & Milestones</div>
+          <p class="x-small text-secondary mb-0" style="font-size: 0.8rem;">
+            Structure your project timeline into quarterly deliverables (Q1 through Q8) for automated validation.
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+        <h6 class="fw-bold mb-3"><i class="bi bi-bookmark-check text-success me-2"></i> Active Grant Calls</h6>
+        <ul class="list-unstyled small mb-0">
+          <li class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+            <span>Clean Energy 2026</span>
+            <span class="badge bg-danger">Nov 30</span>
+          </li>
+          <li class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+            <span>AI Therapeutics Fellowship</span>
+            <span class="badge bg-warning text-dark">Dec 15</span>
+          </li>
+          <li class="d-flex justify-content-between align-items-center">
+            <span>Smart Agritech Fund</span>
+            <span class="badge bg-secondary">Oct 31</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Submit New Proposal -->
+<div class="modal fade" id="newProposalModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-send-plus me-2"></i> Submit Research Grant Proposal</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form onsubmit="event.preventDefault(); alert('Proposal uploaded successfully! Automated AI pre-screening initiated.'); location.reload();">
+          <div class="row g-3">
+            <div class="col-md-12">
+              <label class="form-label fw-semibold small">Project Title <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" placeholder="e.g. Next-Generation Nanomaterials for High-Density Hydrogen Storage" required>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Target Funding Scheme <span class="text-danger">*</span></label>
+              <select class="form-select" required>
+                <option value="">Select funding call...</option>
+                <option>Clean Energy & Smart Grid Innovations 2026</option>
+                <option>AI-Driven Healthcare & Therapeutics Discovery</option>
+                <option>Sustainable Agriculture & Climate Resilience</option>
+                <option>Quantum Computing & Cryptographic Systems</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Total Budget Requested ($ USD) <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" placeholder="150000" min="5000" required>
+            </div>
+
+            <div class="col-md-12">
+              <label class="form-label fw-semibold small">Executive Abstract & Objectives (Max 400 words) <span class="text-danger">*</span></label>
+              <textarea class="form-control" rows="4" placeholder="Summarize your problem statement, scientific novelty, methodology, and expected societal impact for AI semantic parsing..." required></textarea>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Proposal Full Document (PDF) <span class="text-danger">*</span></label>
+              <input type="file" class="form-control" accept=".pdf" required>
+              <small class="text-muted">Standard 15-page grant template format</small>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Itemized Budget Ledger (.xlsx or .csv)</label>
+              <input type="file" class="form-control" accept=".xlsx,.csv">
+              <small class="text-muted">Used for automated ledger sanity checks</small>
+            </div>
+          </div>
+
+          <div class="p-3 bg-light rounded-3 mt-4 border">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="complianceCheck" required>
+              <label class="form-check-label small text-muted" for="complianceCheck">
+                I authorize the AGPES Automated Evaluation Engine to perform NLP originality scanning, conflict-of-interest detection, and anonymized peer reviewer distribution.
+              </label>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-4">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-gradient-primary">
+              <i class="bi bi-cloud-arrow-up me-1"></i> Submit for Automated Evaluation
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: View AI Feedback -->
+<div class="modal fade" id="viewFeedbackModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header bg-dark text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-robot text-info me-2"></i> AI Pre-Screening & Peer Rubric Audit</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-3 border-bottom">
+          <div>
+            <span class="badge bg-primary font-monospace">GP-2026-0842</span>
+            <h6 class="fw-bold mt-1 mb-0">Autonomous Microgrid Balancing with Deep Reinforcement Learning</h6>
+          </div>
+          <div class="text-end">
+            <div class="display-6 fw-bold text-success">91<span class="fs-6 text-muted">/100</span></div>
+            <small class="badge bg-success-subtle text-success">Composite Recommendation: Fund</small>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-3">Multi-Criteria Score Breakdown:</h6>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between small fw-semibold mb-1">
+                <span>Technical Novelty (Weight 30%)</span>
+                <span class="text-primary fw-bold">28 / 30</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-primary" style="width: 93%;"></div>
+              </div>
+              <small class="text-muted mt-1 d-block">Novel multi-agent actor-critic reinforcement model verified against IEEE & ACM papers.</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between small fw-semibold mb-1">
+                <span>Methodology & Feasibility (Weight 25%)</span>
+                <span class="text-info fw-bold">23 / 25</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-info" style="width: 92%;"></div>
+              </div>
+              <small class="text-muted mt-1 d-block">Simulation testbed clearly specified; milestone roadmap is sound and achievable.</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between small fw-semibold mb-1">
+                <span>Budget Justification (Weight 25%)</span>
+                <span class="text-warning fw-bold">22 / 25</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-warning" style="width: 88%;"></div>
+              </div>
+              <small class="text-muted mt-1 d-block">Hardware GPU compute allocation matches realistic cloud cluster quotes.</small>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="p-3 bg-light rounded-3 border">
+              <div class="d-flex justify-content-between small fw-semibold mb-1">
+                <span>Societal & Eco Impact (Weight 20%)</span>
+                <span class="text-success fw-bold">18 / 20</span>
+              </div>
+              <div class="progress" style="height: 6px;">
+                <div class="progress-bar bg-success" style="width: 90%;"></div>
+              </div>
+              <small class="text-muted mt-1 d-block">Potential for 14% carbon curtailment across municipal microgrids.</small>
+            </div>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-2">Synthesized Reviewer Consensus:</h6>
+        <div class="p-3 bg-light rounded-3 border">
+          <p class="small text-secondary mb-2">
+            <strong>Reviewer 1 (Renewable Systems):</strong> "Strongly written proposal with exceptional mathematical formulation. Recommends testing under simulated solar intermittency dropouts."
+          </p>
+          <p class="small text-secondary mb-0">
+            <strong>Reviewer 2 (Deep Learning):</strong> "Clear experimental setup. Suggest allocating more budget to hardware-in-the-loop validation in year two."
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer bg-light border-0">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
