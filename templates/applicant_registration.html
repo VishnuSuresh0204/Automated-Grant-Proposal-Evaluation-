@@ -1,0 +1,121 @@
+{% extends 'commen.html' %}
+{% load static %}
+
+{% block title %}Applicant Registration | Automated Grant Proposal Evaluation{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container py-3">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="p-4 text-white" style="background: linear-gradient(135deg, #0d6efd 0%, #0a4fba 100%);">
+            <div class="d-flex align-items-center gap-3">
+              <div class="ag-brand-icon" style="width: 50px; height: 50px; font-size: 1.4rem; background: rgba(255, 255, 255, 0.2); box-shadow: none;">
+                <i class="bi bi-person-plus-fill"></i>
+              </div>
+              <div>
+                <h4 class="fw-bold mb-1">Grant Applicant Registration</h4>
+                <p class="text-white-50 small mb-0">Create an investigator account to submit research grant proposals and track AI evaluations</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body p-4 p-md-5">
+            <form method="POST" action="/applicant_registration/" enctype="multipart/form-data">
+              {% csrf_token %}
+
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="name" class="form-label fw-semibold small text-secondary">Full Name / Principal Investigator <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control border-start-0" id="name" name="name" placeholder="Dr. Jane Doe" required>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="username" class="form-label fw-semibold small text-secondary">Username <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-at"></i></span>
+                    <input type="text" class="form-control border-start-0" id="username" name="username" placeholder="janedoe_research" required>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="email" class="form-label fw-semibold small text-secondary">Academic / Official Email <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control border-start-0" id="email" name="email" placeholder="jane.doe@university.edu" required>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="phone" class="form-label fw-semibold small text-secondary">Phone Number</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                    <input type="text" class="form-control border-start-0" id="phone" name="phone" placeholder="+1 (555) 019-2834">
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="organization" class="form-label fw-semibold small text-secondary">University / Institute / Research Org</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                    <input type="text" class="form-control border-start-0" id="organization" name="organization" placeholder="e.g. Stanford University / MIT Lab">
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="profile_image" class="form-label fw-semibold small text-secondary">Profile Photo / ID Badge</label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-image"></i></span>
+                    <input type="file" class="form-control border-start-0" id="profile_image" name="profile_image" accept="image/*">
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label for="address" class="form-label fw-semibold small text-secondary">Department / Lab Address</label>
+                  <textarea class="form-control" id="address" name="address" rows="2" placeholder="Department of Computer Science, Room 402, Science Quadrangle"></textarea>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="password" class="form-label fw-semibold small text-secondary">Password <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-lock"></i></span>
+                    <input type="password" class="form-control border-start-0" id="password" name="password" placeholder="Create strong password" required>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="confirm_password" class="form-label fw-semibold small text-secondary">Confirm Password <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
+                    <input type="password" class="form-control border-start-0" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-check mt-3 mb-4">
+                <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                <label class="form-check-label small text-muted" for="termsCheck">
+                  I certify that all research grant submissions will be original work adhering to academic integrity standards and grant ethics guidelines.
+                </label>
+              </div>
+
+              <button type="submit" class="btn btn-gradient-primary w-100 py-2 fw-semibold">
+                <i class="bi bi-check-circle me-1"></i> Register as Grant Applicant
+              </button>
+
+              <div class="text-center mt-3">
+                <span class="small text-muted">Already registered?</span>
+                <a href="/login/" class="small fw-semibold text-primary ms-1">Sign In here</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
