@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Reviewer Workspace | Automated Grant Proposal Evaluation{% endblock %}</title>
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+
+  <style>
+    :root {
+      --reviewer-primary: #198754;
+      --reviewer-dark: #0f172a;
+      --reviewer-surface: #f8fafc;
+      --reviewer-border: #e2e8f0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--reviewer-surface);
+      color: #334155;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .reviewer-topbar {
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .reviewer-topbar a {
+      color: #cbd5e1;
+      text-decoration: none;
+    }
+
+    .reviewer-navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--reviewer-border);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+      padding: 12px 0;
+    }
+
+    .reviewer-brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #198754 0%, #157347 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 12px rgba(25, 135, 84, 0.25);
+    }
+
+    .nav-link-reviewer {
+      font-weight: 500;
+      font-size: 0.92rem;
+      color: #334155 !important;
+      padding: 8px 14px !important;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-link-reviewer:hover,
+    .nav-link-reviewer.active {
+      color: #198754 !important;
+      background: #f0fdf4;
+    }
+
+    .reviewer-footer {
+      margin-top: auto;
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 24px 0;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+  <!-- Reviewer Top Strip -->
+  <div class="reviewer-topbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <span><i class="bi bi-mortarboard-fill text-success me-1"></i> Expert Peer Review Panel</span>
+        <span class="d-none d-md-inline text-muted ms-2">| Double-Blind Proposal Scoring Portal</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white small">
+          <i class="bi bi-person-circle me-1"></i> {{ request.session.username|default:"Reviewer" }}
+          <span class="badge bg-success ms-1">Peer Reviewer</span>
+        </span>
+        <a href="/" class="text-secondary small"><i class="bi bi-globe me-1"></i> Public Site</a>
+        <a href="/logout/" class="text-danger small fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviewer Navigation -->
+  <nav class="navbar navbar-expand-lg reviewer-navbar sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/reviewer/">
+        <div class="reviewer-brand-icon">
+          <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div>
+          <span class="fw-bold fs-5 text-dark">AGPES</span>
+          <span class="badge bg-success-subtle text-success ms-2 small">Reviewer Workspace</span>
+        </div>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#reviewerNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="reviewerNav">
+        <ul class="navbar-nav me-auto ms-lg-4">
+          <li class="nav-item">
+            <a class="nav-link nav-link-reviewer active" href="/reviewer/"><i class="bi bi-clipboard-check me-1"></i> Assigned Proposals</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-reviewer" href="/#about"><i class="bi bi-sliders me-1"></i> Rubric Dimensions</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-reviewer" href="/#grants"><i class="bi bi-briefcase me-1"></i> Active Calls</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+            <i class="bi bi-check-circle-fill me-1"></i> Active Panelist
+          </span>
+          <a href="/logout/" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  <div class="container mt-3">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Content Block -->
+  <main class="flex-grow-1">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Reviewer Footer -->
+  <footer class="reviewer-footer">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <div>
+        <p class="mb-0 text-secondary">© 2026 AGPES Reviewer Panel • Automated Grant Proposal Evaluation System</p>
+      </div>
+      <div>
+        <span class="text-secondary small"><i class="bi bi-shield-check text-success me-1"></i> Strict Double-Blind Confidentiality Enforced</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vendor JS -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>
