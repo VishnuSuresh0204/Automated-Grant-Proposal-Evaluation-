@@ -1,0 +1,265 @@
+{% extends 'ADMIN/commen.html' %}
+{% block content %}
+
+<style>
+    .stat-card {
+        border: none;
+        border-radius: 12px;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .stat-card .card-body {
+        padding: 1.5rem;
+        z-index: 1;
+        position: relative;
+    }
+
+    .stat-card i {
+        position: absolute;
+        right: 15px;
+        bottom: 15px;
+        font-size: 3rem;
+        opacity: 0.2;
+        color: #fff;
+    }
+
+    .card-icon-container {
+        width: 50px;
+        height: 50px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .recent-activity {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .activity-item {
+        border-left: 3px solid #007bff;
+        padding-left: 15px;
+        margin-bottom: 15px;
+        position: relative;
+    }
+
+    .activity-item::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #007bff;
+        position: absolute;
+        left: -6.5px;
+        top: 5px;
+    }
+
+    .table-custom th {
+        background: #f8f9fa;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<div class="row g-4 mb-4">
+    <!-- Stat 1: Authorities -->
+    <div class="col-md-3">
+        <div class="card stat-card bg-primary text-white">
+            <div class="card-body">
+                <div class="card-icon-container">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h6 class="card-subtitle mb-1">Active Authorities</h6>
+                <h2 class="card-title fw-bold mb-0">{{ total_authorities }}</h2>
+                <i class="fas fa-user-shield"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 2: Customers -->
+    <div class="col-md-3">
+        <div class="card stat-card bg-success text-white">
+            <div class="card-body">
+                <div class="card-icon-container">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h6 class="card-subtitle mb-1">Total Customers</h6>
+                <h2 class="card-title fw-bold mb-0">{{ total_customers }}</h2>
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 3: Total Requests -->
+    <div class="col-md-3">
+        <div class="card stat-card bg-info text-white">
+            <div class="card-body">
+                <div class="card-icon-container">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <h6 class="card-subtitle mb-1">Total Applications</h6>
+                <h2 class="card-title fw-bold mb-0">{{ total_requests }}</h2>
+                <i class="fas fa-file-invoice"></i>
+            </div>
+        </div>
+    </div>
+    <!-- Stat 4: Revenue -->
+    <div class="col-md-3">
+        <div class="card stat-card bg-warning text-dark">
+            <div class="card-body">
+                <div class="card-icon-container">
+                    <i class="fas fa-indian-rupee-sign text-dark"></i>
+                </div>
+                <h6 class="card-subtitle mb-1">Total Revenue</h6>
+                <h2 class="card-title fw-bold mb-0">₹ {{ total_revenue }}</h2>
+                <i class="fas fa-indian-rupee-sign"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Application Status Breakdown -->
+    <div class="col-lg-8">
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-chart-pie me-2 text-primary"></i> Application Status Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 text-center">
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-warning">
+                            <span class="text-muted small d-block mb-1">Pending</span>
+                            <h4 class="mb-0 fw-bold">{{ status_counts.Pending|default:0 }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-primary">
+                            <span class="text-muted small d-block mb-1">Forwarded</span>
+                            <h4 class="mb-0 fw-bold">{{ status_counts.Forwarded|default:0 }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-info">
+                            <span class="text-muted small d-block mb-1">Under Review</span>
+                            <h4 class="mb-0 fw-bold">{{ status_counts.UnderReview|default:0 }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="p-3 bg-light rounded shadow-sm border-start border-4 border-success">
+                            <span class="text-muted small d-block mb-1">Issued</span>
+                            <h4 class="mb-0 fw-bold">{{ status_counts.Issued|default:0 }}</h4>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <h6 class="fw-bold mb-3">Recent Requests</h6>
+                    <div class="table-responsive">
+                        <table class="table table-custom align-middle">
+                            <thead>
+                                <tr>
+                                    <th>App #</th>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for req in recent_requests %}
+                                <tr>
+                                    <td class="fw-bold">{{ req.application_number }}</td>
+                                    <td>{{ req.customer.name }}</td>
+                                    <td><span class="badge bg-light text-dark">{{ req.certificate_type.name }}</span>
+                                    </td>
+                                    <td>{{ req.applied_date|date:"d M Y" }}</td>
+                                    <td>
+                                        {% if req.status == 'Pending' %}<span class="text-warning"><i
+                                                class="fas fa-circle-notch fa-spin me-1"></i> {{ req.status }}</span>
+                                        {% elif req.status == 'Issued' %}<span class="text-success"><i
+                                                class="fas fa-check-circle me-1"></i> {{ req.status }}</span>
+                                        {% else %}<span class="text-primary">{{ req.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Side View: Feedback and Top Services -->
+    <div class="col-lg-4">
+        <!-- Top Services -->
+        <div class="card mb-4 border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-star me-2 text-warning"></i> Top Services</h5>
+            </div>
+            <div class="card-body">
+                {% for service in top_services %}
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="small">{{ service.certificate_type__name }}</span>
+                        <span class="small fw-bold">{{ service.total }} reqs</span>
+                    </div>
+                    <div class="progress" style="height: 6px;">
+                        <div class="progress-bar bg-success" role="progressbar"
+                            style="width: {% widthratio service.total total_requests 100 %}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Recent Feedback -->
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white py-3">
+                <h5 class="mb-0 fw-bold"><i class="fas fa-comment-dots me-2 text-info"></i> Latest Feedback</h5>
+            </div>
+            <div class="card-body recent-activity">
+                {% for fb in recent_feedbacks %}
+                <div class="activity-item">
+                    <div class="d-flex justify-content-between">
+                        <span class="fw-bold small">{{ fb.customer.name }}</span>
+                        <span class="text-muted x-small" style="font-size: 0.7rem;">{{ fb.created_at|timesince }}
+                            ago</span>
+                    </div>
+                    <p class="small text-muted mb-0 mt-1">{{ fb.message|truncatechars:80 }}</p>
+                    <div class="mt-1">
+                        {% for i in "12345" %}
+                        {% if forloop.counter <= fb.rating %} <i class="fas fa-star x-small text-warning"
+                            style="font-size: 0.7rem;"></i>
+                            {% else %}
+                            <i class="far fa-star x-small text-muted" style="font-size: 0.7rem;"></i>
+                            {% endif %}
+                            {% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted py-3">No feedback available</p>
+                {% endfor %}
+            </div>
+            <div class="card-footer bg-white text-center">
+                <a href="/admin_view_feedback/" class="btn btn-sm btn-link text-primary text-decoration-none">View All
+                    Feedback <i class="fas fa-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
