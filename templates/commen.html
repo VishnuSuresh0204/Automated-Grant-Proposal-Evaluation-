@@ -1,144 +1,372 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Dashboard | National Certificate Portal</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --govt-blue: #003366;
-            --govt-orange: #ff9933;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Automated Grant Proposal Evaluation System{% endblock %}</title>
+  
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
-        body {
-            font-family: 'Noto Sans', sans-serif;
-            background-color: #f5f5f5;
-        }
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        .navbar-top {
-            background-color: #fff;
-            border-bottom: 4px solid var(--govt-orange);
-            padding: 10px 0;
-        }
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
-        .navbar-main {
-            background-color: var(--govt-blue);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
+  <!-- Main CSS File -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
 
-        .navbar-main .nav-link {
-            color: white !important;
-            padding: 15px 20px;
-            font-size: 0.95rem;
-        }
+  <style>
+    :root {
+      --ag-primary: #0d6efd;
+      --ag-primary-dark: #0a4fba;
+      --ag-accent: #1bbd36;
+      --ag-dark: #121824;
+      --ag-surface: #f8fafc;
+      --ag-border: #e2e8f0;
+    }
 
-        .navbar-main .nav-link:hover,
-        .navbar-main .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--ag-surface);
+      color: #334155;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .card {
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
+    .ag-navbar-top {
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
 
-        .card-header {
-            background-color: #fff;
-            border-bottom: 2px solid #003366;
-            font-weight: bold;
-            color: #003366;
-        }
+    .ag-navbar-top a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
 
-        .btn-primary-custom {
-            background-color: var(--govt-blue);
-            color: #fff;
-        }
+    .ag-navbar-top a:hover {
+      color: #38bdf8;
+    }
 
-        .breadcrumb {
-            background: #fff;
-            padding: 10px 15px;
-            border-radius: 4px;
-            border: 1px solid #ddd;
-        }
+    .ag-navbar-main {
+      background: #ffffff;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border-bottom: 1px solid var(--ag-border);
+      padding: 12px 0;
+    }
 
-        footer {
-            background-color: #333;
-            color: #ccc;
-            padding: 20px 0;
-            margin-top: 50px;
-            font-size: 0.85rem;
-        }
-    </style>
+    .ag-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .ag-brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0d6efd 0%, #1bbd36 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.35rem;
+      box-shadow: 0 8px 16px rgba(13, 110, 253, 0.25);
+    }
+
+    .ag-brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+      line-height: 1.1;
+      margin: 0;
+    }
+
+    .ag-brand-subtitle {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .nav-link-custom {
+      font-weight: 500;
+      font-size: 0.92rem;
+      color: #334155 !important;
+      padding: 8px 14px !important;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .nav-link-custom:hover {
+      color: #0d6efd !important;
+      background: #f1f5f9;
+    }
+
+    .nav-link-custom.active {
+      color: #0d6efd !important;
+      background: #eff6ff;
+      font-weight: 600;
+    }
+
+    .btn-gradient-primary {
+      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+      color: #ffffff !important;
+      border: none;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+      transition: all 0.25s ease;
+    }
+
+    .btn-gradient-primary:hover {
+      background: linear-gradient(135deg, #0b5ed7 0%, #0a4fba 100%);
+      box-shadow: 0 6px 16px rgba(13, 110, 253, 0.35);
+      transform: translateY(-1px);
+    }
+
+    .ag-footer {
+      margin-top: auto;
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 40px 0 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ag-footer h5 {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .ag-footer a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .ag-footer a:hover {
+      color: #38bdf8;
+    }
+
+    .flash-alert {
+      border-radius: 10px;
+      border: none;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
 </head>
 
 <body>
 
-    <div class="navbar-top">
-        <div class="container d-flex align-items-center">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/330px-Emblem_of_India.svg.png"
-                height="45" class="me-3">
-            <div>
-                <h5 class="mb-0 fw-bold text-dark">National Certificate Portal</h5>
-                <small class="text-muted">Citizen Services Dashboard</small>
-            </div>
-            <div class="ms-auto d-flex align-items-center">
-                <span class="me-3 text-dark small">Welcome, <b>User</b></span>
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" height="30" class="rounded-circle">
-            </div>
-        </div>
-    </div>
-
-    <nav class="navbar navbar-expand-lg navbar-main sticky-top mb-4">
-        <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="mainNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item"><a class="nav-link" href="/customer_home/"><i
-                                class="fas fa-tachometer-alt me-1"></i> Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/customer_apply_certificate/"><i
-                                class="fas fa-file-signature me-1"></i> Apply for Certificate</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/customer_applications/"><i
-                                class="fas fa-history me-1"></i> Track Application</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/customer_view_feedback/"><i
-                                class="fas fa-comment-dots me-1"></i> Grievance/Feedback</a></li>
-                </ul>
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link btn btn-danger btn-sm px-3 ms-2" href="/logout/"><i
-                                class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <div class="container" style="min-height: 500px;">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show border-0 shadow-sm rounded-0">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-        {% endfor %}
+  <!-- Top Strip -->
+  <div class="ag-navbar-top">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <span class="me-3"><i class="bi bi-shield-check me-1 text-success"></i> Secure Automated AI Peer Review System</span>
+        <span class="d-none d-md-inline text-muted">|</span>
+        <span class="d-none d-md-inline ms-3"><i class="bi bi-cpu me-1 text-info"></i> NLP Powered Proposal Evaluation Engine</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        {% if request.session.username %}
+          <span class="text-white small">
+            <i class="bi bi-person-circle me-1"></i> Logged in as: <strong>{{ request.session.username }}</strong>
+            <span class="badge bg-primary ms-1">{{ request.session.usertype }}</span>
+          </span>
+          <a href="/logout/" class="text-danger small fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        {% else %}
+          <a href="/login/"><i class="bi bi-box-arrow-in-right me-1"></i> Sign In</a>
+          <a href="/applicant_registration/"><i class="bi bi-person-plus me-1"></i> Applicant Register</a>
+          <a href="/reviewer_registration/"><i class="bi bi-mortarboard me-1"></i> Reviewer Register</a>
         {% endif %}
-
-        {% block content %}
-        {% endblock %}
+      </div>
     </div>
+  </div>
 
-    <footer class="text-center">
-        <div class="container">
-            <p class="mb-0">Content Owned by District Administration</p>
-            <p class="mb-0">Developed and Hosted by National Informatics Centre</p>
+  <!-- Main Navigation -->
+  <nav class="navbar navbar-expand-lg ag-navbar-main sticky-top">
+    <div class="container">
+      <a class="ag-brand" href="/">
+        <div class="ag-brand-icon">
+          <i class="bi bi-award-fill"></i>
         </div>
-    </footer>
+        <div>
+          <h1 class="ag-brand-title">AGPES</h1>
+          <p class="ag-brand-subtitle">Automated Grant Proposal Evaluation</p>
+        </div>
+      </a>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#agMainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="agMainNav">
+        <ul class="navbar-nav me-auto ms-lg-4">
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom" href="/"><i class="bi bi-house-door me-1"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom" href="/#about"><i class="bi bi-info-circle me-1"></i> About System</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom" href="/#pipeline"><i class="bi bi-diagram-3 me-1"></i> AI Evaluation Pipeline</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom" href="/#grants"><i class="bi bi-briefcase me-1"></i> Funding Calls</a>
+          </li>
+          {% if request.session.usertype == 'Applicant' %}
+            <li class="nav-item">
+              <a class="nav-link nav-link-custom active text-primary fw-bold" href="/applicant/"><i class="bi bi-speedometer2 me-1"></i> Applicant Dashboard</a>
+            </li>
+          {% elif request.session.usertype == 'Reviewer' %}
+            <li class="nav-item">
+              <a class="nav-link nav-link-custom active text-primary fw-bold" href="/reviewer/"><i class="bi bi-check2-circle me-1"></i> Reviewer Portal</a>
+            </li>
+          {% elif request.session.usertype == 'Admin' %}
+            <li class="nav-item">
+              <a class="nav-link nav-link-custom active text-primary fw-bold" href="/admin/"><i class="bi bi-shield-lock me-1"></i> Admin Console</a>
+            </li>
+          {% endif %}
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          {% if request.session.username %}
+            {% if request.session.usertype == 'Applicant' %}
+              <a href="/applicant/" class="btn btn-outline-primary btn-sm"><i class="bi bi-folder2-open me-1"></i> My Proposals</a>
+            {% elif request.session.usertype == 'Reviewer' %}
+              <a href="/reviewer/" class="btn btn-outline-primary btn-sm"><i class="bi bi-clipboard-check me-1"></i> Assigned Reviews</a>
+            {% elif request.session.usertype == 'Admin' %}
+              <a href="/admin/" class="btn btn-outline-primary btn-sm"><i class="bi bi-kanban me-1"></i> Management</a>
+            {% endif %}
+            <a href="/logout/" class="btn btn-danger btn-sm"><i class="bi bi-box-arrow-right"></i></a>
+          {% else %}
+            <a href="/login/" class="btn btn-outline-primary btn-sm px-3 fw-semibold"><i class="bi bi-box-arrow-in-right me-1"></i> Login</a>
+            <div class="dropdown">
+              <button class="btn btn-gradient-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-pencil-square me-1"></i> Register
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                <li><a class="dropdown-item py-2" href="/applicant_registration/"><i class="bi bi-person me-2 text-primary"></i> As Applicant</a></li>
+                <li><a class="dropdown-item py-2" href="/reviewer_registration/"><i class="bi bi-mortarboard me-2 text-success"></i> As Reviewer</a></li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  <div class="container mt-3">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show flash-alert" role="alert">
+          <div class="d-flex align-items-center">
+            {% if message.tags == 'error' or message.tags == 'danger' %}
+              <i class="bi bi-exclamation-octagon-fill text-danger fs-5 me-2"></i>
+            {% elif message.tags == 'success' %}
+              <i class="bi bi-check-circle-fill text-success fs-5 me-2"></i>
+            {% else %}
+              <i class="bi bi-info-circle-fill text-primary fs-5 me-2"></i>
+            {% endif %}
+            <div>{{ message }}</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Main Content Block -->
+  <main class="flex-grow-1">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="ag-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="ag-brand-icon" style="width: 36px; height: 36px; font-size: 1.1rem;">
+              <i class="bi bi-award-fill"></i>
+            </div>
+            <h5 class="mb-0 text-white">AGPES</h5>
+          </div>
+          <p class="small text-secondary">
+            Automated Grant Proposal Evaluation System leverages artificial intelligence, NLP, and intelligent peer-matching algorithms to deliver unbiased, transparent, and accelerated research funding evaluation.
+          </p>
+          <div class="d-flex gap-3 text-secondary mt-3">
+            <a href="#" class="fs-5"><i class="bi bi-shield-check text-success"></i></a>
+            <a href="#" class="fs-5"><i class="bi bi-cpu text-info"></i></a>
+            <a href="#" class="fs-5"><i class="bi bi-graph-up text-primary"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <h5>Quick Portals</h5>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="/login/"><i class="bi bi-chevron-right me-1"></i> Sign In Portal</a></li>
+            <li class="mb-2"><a href="/applicant_registration/"><i class="bi bi-chevron-right me-1"></i> Grant Applicant</a></li>
+            <li class="mb-2"><a href="/reviewer_registration/"><i class="bi bi-chevron-right me-1"></i> Peer Reviewer</a></li>
+            <li class="mb-2"><a href="/admin/"><i class="bi bi-chevron-right me-1"></i> Administration</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>Evaluation Pillars</h5>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Novelty & Technical Innovation</a></li>
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Methodology Feasibility</a></li>
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Budget Realism & Justification</a></li>
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Societal & Environmental Impact</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>Helpdesk & Support</h5>
+          <p class="small mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i> National Science & Innovation Center</p>
+          <p class="small mb-2"><i class="bi bi-envelope me-2 text-primary"></i> grants-evaluation@agpes.org</p>
+          <p class="small mb-2"><i class="bi bi-telephone me-2 text-primary"></i> +1 (800) 247-GRANT</p>
+        </div>
+      </div>
+      <div class="pt-3 border-top border-secondary text-center small text-secondary">
+        <p class="mb-0">© 2026 Automated Grant Proposal Evaluation System (AGPES). All Rights Reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
+
+  <!-- Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+
+  {% block extra_js %}{% endblock %}
 </body>
 
 </html>
