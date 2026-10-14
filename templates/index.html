@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>National Certificate Portal | Government of India</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --govt-blue: #003366;
+      --govt-orange: #ff9933;
+      --govt-green: #138808;
+      --light-bg: #f5f5f5;
+    }
+
+    body {
+      font-family: 'Noto Sans', sans-serif;
+      background-color: var(--light-bg);
+    }
+
+    .top-strip {
+      background-color: #333;
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 5px 0;
+    }
+
+    .top-strip a {
+      color: #fff;
+      text-decoration: none;
+      margin-left: 15px;
+    }
+
+    .main-header {
+      background: #fff;
+      padding: 15px 0;
+      border-bottom: 4px solid var(--govt-orange);
+    }
+
+    .emblem-img {
+      height: 60px;
+    }
+
+    .navbar-custom {
+      background-color: var(--govt-blue);
+    }
+
+    .navbar-custom .nav-link {
+      color: #fff !important;
+      font-weight: 500;
+      padding: 10px 20px;
+    }
+
+    .navbar-custom .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .marquee-container {
+      background: #e9ecef;
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+    }
+
+    .hero-section {
+      background: linear-gradient(rgba(0, 51, 102, 0.8), rgba(0, 51, 102, 0.8)), url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Rashtrapati_Bhavan_New_Delhi.jpg/1200px-Rashtrapati_Bhavan_New_Delhi.jpg');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 80px 0;
+    }
+
+    .service-card {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      transition: transform 0.2s;
+      background: #fff;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      border-color: var(--govt-blue);
+    }
+
+    .footer {
+      background-color: #212529;
+      color: #ccc;
+      padding: 40px 0 20px;
+      border-top: 4px solid var(--govt-green);
+    }
+
+    .footer a {
+      color: #ccc;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      color: #fff;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-strip">
+    <div class="container d-flex justify-content-end align-items-center">
+      <span><i class="fas fa-universal-access"></i> Screen Reader Access</span>
+      <a href="#">Skip to Main Content</a>
+      {% comment %} <a href="#">A-</a>
+      <a href="#">A</a>
+      <a href="#">A+</a> {% endcomment %}
+      <a href="#" class="bg-white text-dark px-2 ms-3 rounded-1 fw-bold">English</a>
+      <a href="#">Hindi</a>
+    </div>
+  </div>
+
+  <header class="main-header">
+    <div class="container d-flex align-items-center">
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Emblem_of_India.svg/330px-Emblem_of_India.svg.png"
+        alt="National Emblem" class="emblem-img me-3">
+      <div>
+        <h3 class="mb-0 fw-bold text-dark">National Certificate Portal</h3>
+        <p class="mb-0 text-muted small">Ministry of Electronics & IT, Government of India</p>
+      </div>
+      <div class="ms-auto d-none d-md-block">
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Digital_India_logo.svg/1200px-Digital_India_logo.svg.png"
+          height="50" alt="Digital India">
+      </div>
+    </div>
+  </header>
+
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">About Us</a></li>
+          {% comment %} <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Notifictions & Circulars</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Contact Us</a></li> {% endcomment %}
+        </ul>
+        <div class="d-flex">
+          <a href="/login/" class="btn btn-outline-light btn-sm me-2">Login</a>
+          <a href="/register/" class="btn btn-warning btn-sm text-dark fw-bold">Register</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="marquee-container">
+    <div class="container d-flex align-items-center">
+      <span class="badge bg-danger me-2">LATEST UPDATES</span>
+      <marquee behavior="scroll" direction="left" scrollamount="6">
+        Last date for Scholarship Income Certificate submission extended till 31st March • New Digital Driving License
+        format launched • Aadhar linking mandatory for Birth Certificates from next month.
+      </marquee>
+    </div>
+  </div>
+
+  <section class="hero-section text-center">
+    <div class="container">
+      <h1 class="display-4 fw-bold mb-3">Empowering Citizens with Digital Services</h1>
+      <p class="lead mb-4">Apply for Government Certificates Online - Transparent, Efficient, and Secure.</p>
+      <div class="bg-white p-4 rounded d-inline-block shadow-sm">
+        <form class="d-flex" action="/login/">
+          <input class="form-control me-2" type="search" placeholder="Enter Application Number" aria-label="Track">
+          <button class="btn btn-success" type="submit">Track Status</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="py-5">
+    <div class="container">
+      <div class="row text-center mb-5">
+        <div class="col-12">
+          <h2 class="fw-bold text-dark">Citizen Services</h2>
+          <div class="mx-auto bg-warning" style="height: 3px; width: 60px;"></div>
+        </div>
+      </div>
+      <div class="row g-4">
+        <!-- Service Cards Loop Placeholder -->
+        <div class="col-md-3">
+          <div class="service-card p-4 text-center h-100">
+            <img src="https://cdn-icons-png.flaticon.com/512/3004/3004613.png" height="60" class="mb-3">
+            <h5 class="fw-bold">Birth Certificate</h5>
+            <p class="small text-muted">Apply for new birth registration or corrections.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="service-card p-4 text-center h-100">
+            <img src="https://cdn-icons-png.flaticon.com/512/4205/4205906.png" height="60" class="mb-3">
+            <h5 class="fw-bold">Marriage Certificate</h5>
+            <p class="small text-muted">Register your marriage under the relevant acts.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="service-card p-4 text-center h-100">
+            <img src="https://cdn-icons-png.flaticon.com/512/2966/2966486.png" height="60" class="mb-3">
+            <h5 class="fw-bold">Driving License</h5>
+            <p class="small text-muted">Apply for Learner's or Permanent Driving License.</p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="service-card p-4 text-center h-100">
+            <img src="https://cdn-icons-png.flaticon.com/512/4300/4300057.png" height="60" class="mb-3">
+            <h5 class="fw-bold">Income Certificate</h5>
+            <p class="small text-muted">For scholarship and subsidy purposes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-3 mb-4">
+          <h5 class="text-white border-bottom pb-2 border-secondary">About Portal</h5>
+          <p class="small">The National Certificate Portal is a flagship initiative to provide cashless, faceless, and
+            paperless services to citizens.</p>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="text-white border-bottom pb-2 border-secondary">Important Links</h5>
+          <ul class="list-unstyled small">
+            <li><a href="#">National Portal of India</a></li>
+            <li><a href="#">Digital India</a></li>
+            <li><a href="#">MyGov</a></li>
+            <li><a href="#">Data.gov.in</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="text-white border-bottom pb-2 border-secondary">Policies</h5>
+          <ul class="list-unstyled small">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Use</a></li>
+            <li><a href="#">Copyright Policy</a></li>
+            <li><a href="#">Hyperlinking Policy</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3 mb-4">
+          <h5 class="text-white border-bottom pb-2 border-secondary">Contact Us</h5>
+          <p class="small">
+            <i class="fas fa-map-marker-alt me-2"></i> Electronics Niketan, CGO Complex, New Delhi<br>
+            <i class="fas fa-phone me-2"></i> 1800-111-555 (Toll Free)<br>
+            <i class="fas fa-envelope me-2"></i> helpdesk@ncp.gov.in
+          </p>
+        </div>
+      </div>
+      <div class="row pt-3 border-top border-secondary text-center small">
+        <div class="col-12">
+          <p class="mb-0">© 2026 National Certificate Portal. Designed and Developed by NIC.</p>
+          <p class="text-muted">Last Updated: 06 Feb 2026</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
