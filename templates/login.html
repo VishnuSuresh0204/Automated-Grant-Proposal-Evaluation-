@@ -1,0 +1,88 @@
+{% extends 'commen.html' %}
+{% load static %}
+
+{% block title %}Sign In | Automated Grant Proposal Evaluation System{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container py-4">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-8">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+          <div class="p-4 text-white text-center" style="background: linear-gradient(135deg, #0d6efd 0%, #0a4fba 100%);">
+            <div class="ag-brand-icon mx-auto mb-3" style="width: 52px; height: 52px; font-size: 1.5rem; background: rgba(255, 255, 255, 0.2); box-shadow: none;">
+              <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <h4 class="fw-bold mb-1">Grant System Sign In</h4>
+            <p class="text-white-50 small mb-0">Access your Applicant, Reviewer, or Admin portal</p>
+          </div>
+
+          <div class="card-body p-4 p-md-5">
+            <form method="POST" action="/login/">
+              {% csrf_token %}
+
+              <div class="mb-3">
+                <label for="username" class="form-label fw-semibold small text-secondary">Username</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control border-start-0" id="username" name="username" placeholder="Enter your username" required autofocus>
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label for="password" class="form-label fw-semibold small text-secondary mb-0">Password</label>
+                  <a href="#" class="text-primary x-small text-decoration-none" style="font-size: 0.8rem;">Forgot password?</a>
+                </div>
+                <div class="input-group">
+                  <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-key"></i></span>
+                  <input type="password" class="form-control border-start-0 border-end-0" id="password" name="password" placeholder="Enter your password" required>
+                  <button class="btn btn-light border border-start-0 text-muted" type="button" onclick="togglePass('password', this)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-gradient-primary w-100 py-2 fw-semibold mb-3">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Portal
+              </button>
+
+              <div class="border-top pt-3 text-center">
+                <p class="small text-muted mb-2">Don't have an account yet?</p>
+                <div class="d-flex justify-content-center gap-2">
+                  <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-person-plus me-1"></i> Applicant Register
+                  </a>
+                  <a href="/reviewer_registration/" class="btn btn-sm btn-outline-success">
+                    <i class="bi bi-mortarboard me-1"></i> Reviewer Register
+                  </a>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="card-footer bg-light border-0 py-3 text-center text-muted small">
+            <i class="bi bi-shield-check text-success me-1"></i> 256-bit Encrypted Academic Grant Evaluation Portal
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function togglePass(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector('i');
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.remove('bi-eye');
+      icon.classList.add('bi-eye-slash');
+    } else {
+      input.type = 'password';
+      icon.classList.remove('bi-eye-slash');
+      icon.classList.add('bi-eye');
+    }
+  }
+</script>
+{% endblock %}
