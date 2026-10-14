@@ -1,769 +1,1083 @@
-{% extends 'commen.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %}AGPES | Automated Grant Proposal Evaluation System{% endblock %}
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AGPES | Automated Grant Proposal Evaluation System</title>
 
-{% block extra_css %}
-<style>
-  .ag-hero {
-    position: relative;
-    padding: 100px 0 80px;
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(10, 79, 186, 0.88) 100%),
-                url("{% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %}") center/cover no-repeat;
-    color: #ffffff;
-    overflow: hidden;
-  }
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
 
-  .ag-hero::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 40px;
-    background: linear-gradient(to top, var(--ag-surface), transparent);
-  }
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-  .hero-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 6px 16px;
-    border-radius: 30px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: #38bdf8;
-  }
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
 
-  .ag-hero-title {
-    font-size: 3.2rem;
-    font-weight: 800;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-    margin-bottom: 20px;
-  }
+  <!-- Main CSS File -->
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
 
-  .ag-hero-title span {
-    background: linear-gradient(135deg, #38bdf8 0%, #4ade80 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+  <style>
+    :root {
+      --ag-primary: #0d6efd;
+      --ag-primary-dark: #0a4fba;
+      --ag-accent: #1bbd36;
+      --ag-dark: #121824;
+      --ag-surface: #f8fafc;
+      --ag-border: #e2e8f0;
+    }
 
-  .ag-hero-lead {
-    font-size: 1.15rem;
-    color: #cbd5e1;
-    max-width: 650px;
-    line-height: 1.6;
-    margin-bottom: 32px;
-  }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--ag-surface);
+      color: #334155;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-  .hero-stat-card {
-    background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 14px;
-    padding: 20px;
-    text-align: center;
-    transition: transform 0.25s ease;
-  }
+    .ag-navbar-top {
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
 
-  .hero-stat-card:hover {
-    transform: translateY(-4px);
-    background: rgba(255, 255, 255, 0.12);
-  }
+    .ag-navbar-top a {
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
 
-  .hero-stat-val {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #ffffff;
-    line-height: 1;
-    margin-bottom: 6px;
-  }
+    .ag-navbar-top a:hover {
+      color: #38bdf8;
+    }
 
-  .hero-stat-lbl {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 600;
-    margin: 0;
-  }
+    .ag-navbar-main {
+      background: #ffffff;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.06);
+      border-bottom: 1px solid var(--ag-border);
+      padding: 12px 0;
+    }
 
-  .tracker-box {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 28px;
-    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    margin-top: -45px;
-    position: relative;
-    z-index: 10;
-  }
+    .ag-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
 
-  .feature-card {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 32px 28px;
-    border: 1px solid var(--ag-border);
-    transition: all 0.3s ease;
-    height: 100%;
-    position: relative;
-    overflow: hidden;
-  }
+    .ag-brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0d6efd 0%, #1bbd36 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.35rem;
+      box-shadow: 0 8px 16px rgba(13, 110, 253, 0.25);
+    }
 
-  .feature-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 0;
-    background: linear-gradient(to bottom, #0d6efd, #1bbd36);
-    transition: height 0.3s ease;
-  }
+    .ag-brand-title {
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+      line-height: 1.1;
+      margin: 0;
+    }
 
-  .feature-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
-    border-color: #cbd5e1;
-  }
+    .ag-brand-subtitle {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin: 0;
+    }
 
-  .feature-card:hover::before {
-    height: 100%;
-  }
+    .nav-link-custom {
+      font-weight: 500;
+      font-size: 0.92rem;
+      color: #334155 !important;
+      padding: 8px 14px !important;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
 
-  .feature-icon-wrap {
-    width: 60px;
-    height: 60px;
-    border-radius: 14px;
-    background: #eff6ff;
-    color: #0d6efd;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-  }
+    .nav-link-custom:hover {
+      color: #0d6efd !important;
+      background: #f1f5f9;
+    }
 
-  .feature-card:hover .feature-icon-wrap {
-    background: linear-gradient(135deg, #0d6efd 0%, #1bbd36 100%);
-    color: #ffffff;
-    transform: scale(1.05);
-  }
+    .btn-gradient-primary {
+      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+      color: #ffffff !important;
+      border: none;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+      transition: all 0.25s ease;
+    }
 
-  .step-node {
-    background: #ffffff;
-    border-radius: 16px;
-    padding: 28px 24px;
-    border: 1px solid var(--ag-border);
-    position: relative;
-    transition: all 0.25s ease;
-    height: 100%;
-  }
+    .btn-gradient-primary:hover {
+      background: linear-gradient(135deg, #0b5ed7 0%, #0a4fba 100%);
+      box-shadow: 0 6px 16px rgba(13, 110, 253, 0.35);
+      transform: translateY(-1px);
+    }
 
-  .step-node:hover {
-    box-shadow: 0 12px 24px rgba(13, 110, 253, 0.08);
-    border-color: #93c5fd;
-  }
+    .ag-hero {
+      position: relative;
+      padding: 100px 0 80px;
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(10, 79, 186, 0.88) 100%),
+                  url("{% static 'assets/img/hero-carousel/hero-carousel-1.jpg' %}") center/cover no-repeat;
+      color: #ffffff;
+      overflow: hidden;
+    }
 
-  .step-num {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background: #0f172a;
-    color: #38bdf8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 1.1rem;
-    margin-bottom: 18px;
-  }
+    .ag-hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(to top, var(--ag-surface), transparent);
+    }
 
-  .grant-card {
-    background: #ffffff;
-    border-radius: 14px;
-    border: 1px solid var(--ag-border);
-    padding: 24px;
-    transition: all 0.25s ease;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-  }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: #38bdf8;
+    }
 
-  .grant-card:hover {
-    border-color: #0d6efd;
-    box-shadow: 0 10px 24px rgba(13, 110, 253, 0.1);
-    transform: translateY(-3px);
-  }
+    .ag-hero-title {
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
 
-  .rubric-bar {
-    height: 8px;
-    border-radius: 4px;
-    background: #e2e8f0;
-    overflow: hidden;
-    margin-top: 6px;
-  }
+    .ag-hero-title span {
+      background: linear-gradient(135deg, #38bdf8 0%, #4ade80 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
 
-  .rubric-fill {
-    height: 100%;
-    border-radius: 4px;
-  }
-</style>
-{% endblock %}
+    .ag-hero-lead {
+      font-size: 1.15rem;
+      color: #cbd5e1;
+      max-width: 650px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
 
-{% block content %}
-<!-- Hero Section -->
-<section class="ag-hero">
+    .hero-stat-card {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.25s ease;
+    }
+
+    .hero-stat-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .hero-stat-val {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .hero-stat-lbl {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .tracker-box {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.15);
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      margin-top: -45px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 32px 28px;
+      border: 1px solid var(--ag-border);
+      transition: all 0.3s ease;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 0;
+      background: linear-gradient(to bottom, #0d6efd, #1bbd36);
+      transition: height 0.3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.08);
+      border-color: #cbd5e1;
+    }
+
+    .feature-card:hover::before {
+      height: 100%;
+    }
+
+    .feature-icon-wrap {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      background: #eff6ff;
+      color: #0d6efd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-card:hover .feature-icon-wrap {
+      background: linear-gradient(135deg, #0d6efd 0%, #1bbd36 100%);
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+
+    .step-node {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 28px 24px;
+      border: 1px solid var(--ag-border);
+      position: relative;
+      transition: all 0.25s ease;
+      height: 100%;
+    }
+
+    .step-node:hover {
+      box-shadow: 0 12px 24px rgba(13, 110, 253, 0.08);
+      border-color: #93c5fd;
+    }
+
+    .step-num {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #0f172a;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 18px;
+    }
+
+    .grant-card {
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid var(--ag-border);
+      padding: 24px;
+      transition: all 0.25s ease;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .grant-card:hover {
+      border-color: #0d6efd;
+      box-shadow: 0 10px 24px rgba(13, 110, 253, 0.1);
+      transform: translateY(-3px);
+    }
+
+    .rubric-bar {
+      height: 8px;
+      border-radius: 4px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+
+    .rubric-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+
+    .ag-footer {
+      margin-top: auto;
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 40px 0 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ag-footer h5 {
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .ag-footer a {
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .ag-footer a:hover {
+      color: #38bdf8;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Strip -->
+  <div class="ag-navbar-top">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <span class="me-3"><i class="bi bi-shield-check me-1 text-success"></i> Secure Automated AI Peer Review System</span>
+        <span class="d-none d-md-inline text-muted">|</span>
+        <span class="d-none d-md-inline ms-3"><i class="bi bi-cpu me-1 text-info"></i> NLP Powered Proposal Evaluation Engine</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        {% if request.session.username %}
+          <span class="text-white small">
+            <i class="bi bi-person-circle me-1"></i> Logged in as: <strong>{{ request.session.username }}</strong>
+            <span class="badge bg-primary ms-1">{{ request.session.usertype }}</span>
+          </span>
+          <a href="/logout/" class="text-danger small fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        {% else %}
+          <a href="/login/"><i class="bi bi-box-arrow-in-right me-1"></i> Sign In</a>
+          <a href="/applicant_registration/"><i class="bi bi-person-plus me-1"></i> Applicant Register</a>
+          <a href="/reviewer_registration/"><i class="bi bi-mortarboard me-1"></i> Reviewer Register</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation -->
+  <nav class="navbar navbar-expand-lg ag-navbar-main sticky-top">
+    <div class="container">
+      <a class="ag-brand" href="/">
+        <div class="ag-brand-icon">
+          <i class="bi bi-award-fill"></i>
+        </div>
+        <div>
+          <h1 class="ag-brand-title">AGPES</h1>
+          <p class="ag-brand-subtitle">Automated Grant Proposal Evaluation</p>
+        </div>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#agMainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="agMainNav">
+        <ul class="navbar-nav me-auto ms-lg-4">
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom text-primary fw-bold" href="/"><i class="bi bi-house-door me-1"></i> Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom" href="#about"><i class="bi bi-info-circle me-1"></i> About System</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom" href="#pipeline"><i class="bi bi-diagram-3 me-1"></i> AI Evaluation Pipeline</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-custom" href="#grants"><i class="bi bi-briefcase me-1"></i> Funding Calls</a>
+          </li>
+          {% if request.session.usertype == 'Applicant' %}
+            <li class="nav-item">
+              <a class="nav-link nav-link-custom active text-primary fw-bold" href="/applicant/"><i class="bi bi-speedometer2 me-1"></i> Applicant Dashboard</a>
+            </li>
+          {% elif request.session.usertype == 'Reviewer' %}
+            <li class="nav-item">
+              <a class="nav-link nav-link-custom active text-primary fw-bold" href="/reviewer/"><i class="bi bi-check2-circle me-1"></i> Reviewer Portal</a>
+            </li>
+          {% elif request.session.usertype == 'Admin' %}
+            <li class="nav-item">
+              <a class="nav-link nav-link-custom active text-primary fw-bold" href="/admin/"><i class="bi bi-shield-lock me-1"></i> Admin Console</a>
+            </li>
+          {% endif %}
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          {% if request.session.username %}
+            {% if request.session.usertype == 'Applicant' %}
+              <a href="/applicant/" class="btn btn-outline-primary btn-sm"><i class="bi bi-folder2-open me-1"></i> My Proposals</a>
+            {% elif request.session.usertype == 'Reviewer' %}
+              <a href="/reviewer/" class="btn btn-outline-primary btn-sm"><i class="bi bi-clipboard-check me-1"></i> Assigned Reviews</a>
+            {% elif request.session.usertype == 'Admin' %}
+              <a href="/admin/" class="btn btn-outline-primary btn-sm"><i class="bi bi-kanban me-1"></i> Management</a>
+            {% endif %}
+            <a href="/logout/" class="btn btn-danger btn-sm"><i class="bi bi-box-arrow-right"></i></a>
+          {% else %}
+            <a href="/login/" class="btn btn-outline-primary btn-sm px-3 fw-semibold"><i class="bi bi-box-arrow-in-right me-1"></i> Login</a>
+            <div class="dropdown">
+              <button class="btn btn-gradient-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-pencil-square me-1"></i> Register
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                <li><a class="dropdown-item py-2" href="/applicant_registration/"><i class="bi bi-person me-2 text-primary"></i> As Applicant</a></li>
+                <li><a class="dropdown-item py-2" href="/reviewer_registration/"><i class="bi bi-mortarboard me-2 text-success"></i> As Reviewer</a></li>
+              </ul>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="ag-hero">
+    <div class="container">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-7">
+          <div class="hero-badge">
+            <i class="bi bi-stars"></i> Next-Gen Research Grant Governance
+          </div>
+          <h1 class="ag-hero-title">
+            Automated <span>Grant Proposal Evaluation</span> Powered by AI
+          </h1>
+          <p class="ag-hero-lead">
+            Streamlining research funding with deep NLP eligibility verification, semantic novelty scoring, multi-criteria rubric evaluation, and automated expert reviewer matching.
+          </p>
+
+          <div class="d-flex flex-wrap gap-3 mb-4">
+            <a href="/applicant_registration/" class="btn btn-gradient-primary px-4 py-2 fs-6">
+              <i class="bi bi-send-check me-2"></i> Submit Grant Proposal
+            </a>
+            <a href="/reviewer_registration/" class="btn btn-outline-light px-4 py-2 fs-6">
+              <i class="bi bi-mortarboard me-2"></i> Join as Reviewer
+            </a>
+            <a href="/login/" class="btn btn-link text-white text-decoration-none px-3 py-2">
+              <i class="bi bi-arrow-right-circle me-1 text-info"></i> Direct Login
+            </a>
+          </div>
+
+          <div class="d-flex align-items-center gap-4 pt-2 text-white-50 small">
+            <div><i class="bi bi-check-circle-fill text-success me-1"></i> Objective & Unbiased</div>
+            <div><i class="bi bi-check-circle-fill text-success me-1"></i> NLP-Assisted Rubric</div>
+            <div><i class="bi bi-check-circle-fill text-success me-1"></i> Fast Turnaround</div>
+          </div>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="row g-3">
+            <div class="col-6">
+              <div class="hero-stat-card">
+                <div class="hero-stat-val text-info">85%</div>
+                <p class="hero-stat-lbl">Time Saved in Screening</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="hero-stat-card">
+                <div class="hero-stat-val text-success">98.2%</div>
+                <p class="hero-stat-lbl">Reviewer Match Accuracy</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="hero-stat-card">
+                <div class="hero-stat-val text-warning">1,400+</div>
+                <p class="hero-stat-lbl">Proposals Evaluated</p>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="hero-stat-card">
+                <div class="hero-stat-val text-primary">$38M+</div>
+                <p class="hero-stat-lbl">Research Grants Managed</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 mt-3 rounded-4" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.15);">
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <span class="badge bg-success"><i class="bi bi-activity"></i> Active Cycle</span>
+              <small class="text-light">FY 2026-27 Research Call Round 1</small>
+            </div>
+            <p class="small text-secondary mb-3">
+              Open call for breakthrough proposals across Climate Tech, AI Therapeutics, Clean Energy, and Advanced Materials.
+            </p>
+            <a href="#grants" class="btn btn-sm btn-outline-info w-100">
+              View Active Funding Calls <i class="bi bi-arrow-down-short ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Proposal Quick Status Tracker -->
   <div class="container">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-7">
-        <div class="hero-badge">
-          <i class="bi bi-stars"></i> Next-Gen Research Grant Governance
+    <div class="tracker-box">
+      <div class="row align-items-center g-4">
+        <div class="col-lg-5">
+          <div class="d-flex align-items-center gap-3">
+            <div class="ag-brand-icon bg-primary" style="width: 50px; height: 50px; font-size: 1.4rem;">
+              <i class="bi bi-search"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1">Track Grant Proposal Status</h5>
+              <p class="text-muted small mb-0">Check live AI screening and reviewer evaluation progress instantly</p>
+            </div>
+          </div>
         </div>
-        <h1 class="ag-hero-title">
-          Automated <span>Grant Proposal Evaluation</span> Powered by AI
-        </h1>
-        <p class="ag-hero-lead">
-          Streamlining research funding with deep NLP eligibility verification, semantic novelty scoring, multi-criteria rubric evaluation, and automated expert reviewer matching.
-        </p>
-
-        <div class="d-flex flex-wrap gap-3 mb-4">
-          <a href="/applicant_registration/" class="btn btn-gradient-primary px-4 py-2 fs-6">
-            <i class="bi bi-send-check me-2"></i> Submit Grant Proposal
-          </a>
-          <a href="/reviewer_registration/" class="btn btn-outline-light px-4 py-2 fs-6">
-            <i class="bi bi-mortarboard me-2"></i> Join as Reviewer
-          </a>
-          <a href="/login/" class="btn btn-link text-white text-decoration-none px-3 py-2">
-            <i class="bi bi-arrow-right-circle me-1 text-info"></i> Direct Login
-          </a>
-        </div>
-
-        <div class="d-flex align-items-center gap-4 pt-2 text-white-50 small">
-          <div><i class="bi bi-check-circle-fill text-success me-1"></i> Objective & Unbiased</div>
-          <div><i class="bi bi-check-circle-fill text-success me-1"></i> NLP-Assisted Rubric</div>
-          <div><i class="bi bi-check-circle-fill text-success me-1"></i> Fast Turnaround</div>
+        <div class="col-lg-7">
+          <form class="row g-2" onsubmit="event.preventDefault(); document.getElementById('trackerResult').classList.remove('d-none');">
+            <div class="col-md-8">
+              <div class="input-group">
+                <span class="input-group-text bg-light border-end-0"><i class="bi bi-file-earmark-code text-muted"></i></span>
+                <input type="text" class="form-control border-start-0" id="proposalCode" placeholder="Enter Proposal ID (e.g., GP-2026-1048)" value="GP-2026-1048" required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <button type="submit" class="btn btn-gradient-primary w-100">
+                <i class="bi bi-crosshair me-1"></i> Check Progress
+              </button>
+            </div>
+          </form>
         </div>
       </div>
 
-      <div class="col-lg-5">
-        <div class="row g-3">
-          <div class="col-6">
-            <div class="hero-stat-card">
-              <div class="hero-stat-val text-info">85%</div>
-              <p class="hero-stat-lbl">Time Saved in Screening</p>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="hero-stat-card">
-              <div class="hero-stat-val text-success">98.2%</div>
-              <p class="hero-stat-lbl">Reviewer Match Accuracy</p>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="hero-stat-card">
-              <div class="hero-stat-val text-warning">1,400+</div>
-              <p class="hero-stat-lbl">Proposals Evaluated</p>
-            </div>
-          </div>
-          <div class="col-6">
-            <div class="hero-stat-card">
-              <div class="hero-stat-val text-primary">$38M+</div>
-              <p class="hero-stat-lbl">Research Grants Managed</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="p-4 mt-3 rounded-4" style="background: rgba(15, 23, 42, 0.7); border: 1px solid rgba(255, 255, 255, 0.15);">
-          <div class="d-flex align-items-center gap-3 mb-2">
-            <span class="badge bg-success"><i class="bi bi-activity"></i> Active Cycle</span>
-            <small class="text-light">FY 2026-27 Research Call Round 1</small>
-          </div>
-          <p class="small text-secondary mb-3">
-            Open call for breakthrough proposals across Climate Tech, AI Therapeutics, Clean Energy, and Advanced Materials.
-          </p>
-          <a href="#grants" class="btn btn-sm btn-outline-info w-100">
-            View Active Funding Calls <i class="bi bi-arrow-down-short ms-1"></i>
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Proposal Quick Status Tracker -->
-<div class="container">
-  <div class="tracker-box">
-    <div class="row align-items-center g-4">
-      <div class="col-lg-5">
-        <div class="d-flex align-items-center gap-3">
-          <div class="ag-brand-icon bg-primary" style="width: 50px; height: 50px; font-size: 1.4rem;">
-            <i class="bi bi-search"></i>
-          </div>
-          <div>
-            <h5 class="fw-bold mb-1">Track Grant Proposal Status</h5>
-            <p class="text-muted small mb-0">Check live AI screening and reviewer evaluation progress instantly</p>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-7">
-        <form class="row g-2" onsubmit="event.preventDefault(); document.getElementById('trackerResult').classList.remove('d-none');">
-          <div class="col-md-8">
-            <div class="input-group">
-              <span class="input-group-text bg-light border-end-0"><i class="bi bi-file-earmark-code text-muted"></i></span>
-              <input type="text" class="form-control border-start-0" id="proposalCode" placeholder="Enter Proposal ID (e.g., GP-2026-1048)" value="GP-2026-1048" required>
-            </div>
-          </div>
+      <!-- Live Demo Result Widget -->
+      <div id="trackerResult" class="d-none mt-4 pt-3 border-top">
+        <div class="row align-items-center g-3">
           <div class="col-md-4">
-            <button type="submit" class="btn btn-gradient-primary w-100">
-              <i class="bi bi-crosshair me-1"></i> Check Progress
-            </button>
+            <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1 mb-1">Proposal ID: GP-2026-1048</span>
+            <h6 class="fw-bold mb-1">Neural Network Optimization for Renewable Grid Storage</h6>
+            <p class="text-muted small mb-0"><i class="bi bi-building me-1"></i> Institute of Advanced Technology</p>
           </div>
-        </form>
+          <div class="col-md-5">
+            <div class="d-flex justify-content-between small mb-1">
+              <span class="fw-semibold text-secondary">Stage: Multi-Reviewer Consensus</span>
+              <span class="fw-bold text-success">82% Completed</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 82%"></div>
+            </div>
+            <div class="d-flex justify-content-between text-muted x-small mt-1" style="font-size: 0.72rem;">
+              <span><i class="bi bi-check-circle-fill text-success"></i> AI Screened (92/100)</span>
+              <span><i class="bi bi-check-circle-fill text-success"></i> 2 of 3 Reviews In</span>
+              <span><i class="bi bi-clock text-warning"></i> Committee Final</span>
+            </div>
+          </div>
+          <div class="col-md-3 text-md-end">
+            <a href="/login/" class="btn btn-sm btn-outline-primary">
+              Sign In for Full Audit Report <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <!-- Live Demo Result Widget -->
-    <div id="trackerResult" class="d-none mt-4 pt-3 border-top">
-      <div class="row align-items-center g-3">
-        <div class="col-md-4">
-          <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1 mb-1">Proposal ID: GP-2026-1048</span>
-          <h6 class="fw-bold mb-1">Neural Network Optimization for Renewable Grid Storage</h6>
-          <p class="text-muted small mb-0"><i class="bi bi-building me-1"></i> Institute of Advanced Technology</p>
+  <!-- Key Pillars / Features Section -->
+  <section id="about" class="py-5 mt-4">
+    <div class="container py-4">
+      <div class="text-center max-w-2xl mx-auto mb-5">
+        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 mb-2">INTELLIGENT ARCHITECTURE</span>
+        <h2 class="fw-bold fs-1 mb-3">Transforming Grant Evaluation With AI</h2>
+        <p class="text-muted">
+          Traditional grant peer review is slow, prone to cognitive bias, and bogged down by administrative friction. AGPES combines cutting-edge Natural Language Processing with standardized rubrics to make evaluation faster, fairer, and auditable.
+        </p>
+      </div>
+
+      <div class="row g-4">
+        <!-- Feature 1 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <i class="bi bi-cpu"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Automated NLP Pre-Screening</h5>
+            <p class="text-muted small mb-3">
+              Analyzes proposal syntax, eligibility compliance, completeness of documentation, and budget calculations within minutes of submission.
+            </p>
+            <ul class="list-unstyled small text-secondary mb-0">
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Plagiarism & originality audit</li>
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Budget vs work-package coherence</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Guideline format verification</li>
+            </ul>
+          </div>
         </div>
-        <div class="col-md-5">
-          <div class="d-flex justify-content-between small mb-1">
-            <span class="fw-semibold text-secondary">Stage: Multi-Reviewer Consensus</span>
-            <span class="fw-bold text-success">82% Completed</span>
-          </div>
-          <div class="progress" style="height: 8px;">
-            <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" style="width: 82%"></div>
-          </div>
-          <div class="d-flex justify-content-between text-muted x-small mt-1" style="font-size: 0.72rem;">
-            <span><i class="bi bi-check-circle-fill text-success"></i> AI Screened (92/100)</span>
-            <span><i class="bi bi-check-circle-fill text-success"></i> 2 of 3 Reviews In</span>
-            <span><i class="bi bi-clock text-warning"></i> Committee Final</span>
+
+        <!-- Feature 2 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <i class="bi bi-person-bounding-box"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Smart Reviewer Matching</h5>
+            <p class="text-muted small mb-3">
+              Semantic topic modeling compares proposal abstracts and keywords against reviewer publication records and expertise domains without conflict of interest.
+            </p>
+            <ul class="list-unstyled small text-secondary mb-0">
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Automated conflict-of-interest detection</li>
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Workload & reviewer availability balancing</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Domain relevance score generation</li>
+            </ul>
           </div>
         </div>
-        <div class="col-md-3 text-md-end">
-          <a href="/login/" class="btn btn-sm btn-outline-primary">
-            Sign In for Full Audit Report <i class="bi bi-arrow-right ms-1"></i>
+
+        <!-- Feature 3 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <i class="bi bi-sliders2-vertical"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Multi-Criteria Rubric Scoring</h5>
+            <p class="text-muted small mb-3">
+              Calibrated scoring across Technical Merit, Methodological Rigor, Societal & Economic Impact, and Resource Feasibility.
+            </p>
+            <ul class="list-unstyled small text-secondary mb-0">
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Standardized quantitative rubrics</li>
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Weighted AI recommendation score</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Comprehensive qualitative feedback</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Double-Blind & Bias Mitigation</h5>
+            <p class="text-muted small mb-3">
+              Protects researchers from gender, institutional, and geographic evaluation biases through automated anonymization during peer review.
+            </p>
+            <ul class="list-unstyled small text-secondary mb-0">
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Automated entity de-identification</li>
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Blinded peer review workspace</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Transparent decision audit log</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <i class="bi bi-speedometer"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Real-Time Evaluation Dashboards</h5>
+            <p class="text-muted small mb-3">
+              Dedicated portals for Applicants, Reviewers, and Funding Administrators with real-time analytics, notifications, and review queues.
+            </p>
+            <ul class="list-unstyled small text-secondary mb-0">
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Applicant lifecycle tracking</li>
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Reviewer evaluation worksheets</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Admin cohort ranking & awards</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="feature-card">
+            <div class="feature-icon-wrap">
+              <i class="bi bi-file-earmark-check"></i>
+            </div>
+            <h5 class="fw-bold mb-2">Actionable Feedback Generation</h5>
+            <p class="text-muted small mb-3">
+              Unsuccessful and funded applicants receive structured, constructive critiques and AI-synthesized improvement suggestions for future cycles.
+            </p>
+            <ul class="list-unstyled small text-secondary mb-0">
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Detailed rubric score breakdown</li>
+              <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Reviewer consensus commentary</li>
+              <li><i class="bi bi-check2-circle text-success me-2"></i> Resubmission enhancement hints</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pipeline Section -->
+  <section id="pipeline" class="py-5 bg-white border-top border-bottom">
+    <div class="container py-4">
+      <div class="text-center mb-5">
+        <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 mb-2">END-TO-END WORKFLOW</span>
+        <h2 class="fw-bold fs-1 mb-3">The AI Evaluation Lifecycle</h2>
+        <p class="text-muted max-w-xl mx-auto">From initial document upload to final award disbursement, every stage is structured and auditable.</p>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="step-node">
+            <div class="step-num">01</div>
+            <h5 class="fw-bold mb-2">Proposal Submission</h5>
+            <p class="text-muted small mb-0">
+              Applicant fills required metadata, uploads research proposal PDF, budget ledger, and timeline milestones through the Applicant Portal.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="step-node">
+            <div class="step-num" style="background: #0d6efd; color: white;">02</div>
+            <h5 class="fw-bold mb-2">AI Pre-Evaluation</h5>
+            <p class="text-muted small mb-0">
+              System runs semantic parsing, compliance check, novelty evaluation, and generates an initial composite AI score (0-100).
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="step-node">
+            <div class="step-num" style="background: #1bbd36; color: white;">03</div>
+            <h5 class="fw-bold mb-2">Expert Peer Review</h5>
+            <p class="text-muted small mb-0">
+              Matched domain reviewers access anonymized proposals, examine AI suggestions, and grade against calibrated rubrics with detailed notes.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6">
+          <div class="step-node">
+            <div class="step-num" style="background: #0f172a; color: #4ade80;">04</div>
+            <h5 class="fw-bold mb-2">Decision & Award</h5>
+            <p class="text-muted small mb-0">
+              Admin console aggregates AI confidence + reviewer consensus to rank submissions, disburse grants, and issue transparent feedback reports.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Active Grant Calls Section -->
+  <section id="grants" class="py-5">
+    <div class="container py-4">
+      <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
+        <div>
+          <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 mb-2">OPEN FUNDING ROUNDS</span>
+          <h2 class="fw-bold mb-1">Active Grant Schemes & Calls</h2>
+          <p class="text-muted small mb-0">Submit your research proposals before upcoming deadline cycles</p>
+        </div>
+        <div>
+          <a href="/applicant_registration/" class="btn btn-outline-primary btn-sm">
+            Register & Apply Now <i class="bi bi-arrow-right ms-1"></i>
           </a>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- Key Pillars / Features Section -->
-<section id="about" class="py-5 mt-4">
-  <div class="container py-4">
-    <div class="text-center max-w-2xl mx-auto mb-5">
-      <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 mb-2">INTELLIGENT ARCHITECTURE</span>
-      <h2 class="fw-bold fs-1 mb-3">Transforming Grant Evaluation With AI</h2>
-      <p class="text-muted">
-        Traditional grant peer review is slow, prone to cognitive bias, and bogged down by administrative friction. AGPES combines cutting-edge Natural Language Processing with standardized rubrics to make evaluation faster, fairer, and auditable.
+      <div class="row g-4">
+        <!-- Grant 1 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="grant-card">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge bg-success">Open for Submissions</span>
+              <span class="fw-bold text-primary">$150,000</span>
+            </div>
+            <h5 class="fw-bold mb-2">Clean Energy & Smart Grid Innovations 2026</h5>
+            <p class="text-muted small flex-grow-1">
+              Grants for research on next-generation battery chemistries, decentralized microgrid software, and green hydrogen storage systems.
+            </p>
+            <div class="border-top pt-3 mt-3 text-muted small">
+              <div class="d-flex justify-content-between mb-1">
+                <span><i class="bi bi-calendar-event me-1"></i> Deadline:</span>
+                <strong class="text-dark">Nov 30, 2026</strong>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span><i class="bi bi-people me-1"></i> Target:</span>
+                <strong class="text-dark">Universities & Startups</strong>
+              </div>
+              <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary w-100">Apply for this Grant</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grant 2 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="grant-card">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge bg-success">Open for Submissions</span>
+              <span class="fw-bold text-primary">$250,000</span>
+            </div>
+            <h5 class="fw-bold mb-2">AI-Driven Healthcare & Therapeutics Discovery</h5>
+            <p class="text-muted small flex-grow-1">
+              Funding foundational models for protein folding, clinical trial acceleration, and low-cost automated diagnostic tools for rural clinics.
+            </p>
+            <div class="border-top pt-3 mt-3 text-muted small">
+              <div class="d-flex justify-content-between mb-1">
+                <span><i class="bi bi-calendar-event me-1"></i> Deadline:</span>
+                <strong class="text-dark">Dec 15, 2026</strong>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span><i class="bi bi-people me-1"></i> Target:</span>
+                <strong class="text-dark">Biomedical Researchers</strong>
+              </div>
+              <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary w-100">Apply for this Grant</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Grant 3 -->
+        <div class="col-lg-4 col-md-6">
+          <div class="grant-card">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+              <span class="badge bg-warning text-dark">Closing Soon</span>
+              <span class="fw-bold text-primary">$100,000</span>
+            </div>
+            <h5 class="fw-bold mb-2">Sustainable Agriculture & Climate Resilience</h5>
+            <p class="text-muted small flex-grow-1">
+              Support for precision farming IoT sensors, drought-resistant crop engineering, and regenerative soil restoration research.
+            </p>
+            <div class="border-top pt-3 mt-3 text-muted small">
+              <div class="d-flex justify-content-between mb-1">
+                <span><i class="bi bi-calendar-event me-1"></i> Deadline:</span>
+                <strong class="text-danger">Oct 31, 2026</strong>
+              </div>
+              <div class="d-flex justify-content-between mb-3">
+                <span><i class="bi bi-people me-1"></i> Target:</span>
+                <strong class="text-dark">Agritech Research Labs</strong>
+              </div>
+              <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary w-100">Apply for this Grant</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rubric & Evaluation Standard Section -->
+  <section class="py-5 bg-white border-top">
+    <div class="container py-4">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6">
+          <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 mb-2">SCORING RUBRIC</span>
+          <h2 class="fw-bold mb-3">Standardized, Transparent Rubrics</h2>
+          <p class="text-muted">
+            Our dual-layer scoring model harmonizes AI algorithmic evaluation with human peer reviewer domain judgment across 4 key dimensions:
+          </p>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-semibold">
+              <span>Technical Innovation & Novelty</span>
+              <span class="text-primary">30% Weight</span>
+            </div>
+            <div class="rubric-bar">
+              <div class="rubric-fill bg-primary" style="width: 30%"></div>
+            </div>
+            <small class="text-muted">Assesses scientific originality, state-of-the-art advancement, and prior-art comparison.</small>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-semibold">
+              <span>Methodological Rigor & Feasibility</span>
+              <span class="text-info">25% Weight</span>
+            </div>
+            <div class="rubric-bar">
+              <div class="rubric-fill bg-info" style="width: 25%"></div>
+            </div>
+            <small class="text-muted">Evaluates experimental plan, team capabilities, timeline, and contingency risk buffers.</small>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-semibold">
+              <span>Budget Justification & Realism</span>
+              <span class="text-warning">25% Weight</span>
+            </div>
+            <div class="rubric-bar">
+              <div class="rubric-fill bg-warning" style="width: 25%"></div>
+            </div>
+            <small class="text-muted">Cross-checks equipment expenses, personnel costs, and benchmarked market rates.</small>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex justify-content-between small fw-semibold">
+              <span>Societal & Environmental Impact</span>
+              <span class="text-success">20% Weight</span>
+            </div>
+            <div class="rubric-bar">
+              <div class="rubric-fill bg-success" style="width: 20%"></div>
+            </div>
+            <small class="text-muted">Projects long-term public benefit, sustainability contribution, and commercialization potential.</small>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="p-4 rounded-4 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0;">
+            <h5 class="fw-bold mb-3"><i class="bi bi-shield-shaded text-primary me-2"></i> Role-Based Access Portals</h5>
+            <p class="text-muted small mb-4">
+              Select your portal to log in or register based on your role within the grant evaluation ecosystem:
+            </p>
+
+            <div class="d-flex flex-column gap-3">
+              <div class="p-3 bg-white rounded-3 border d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="ag-brand-icon bg-primary" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                    <i class="bi bi-person"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold mb-0">Grant Applicant</h6>
+                    <small class="text-muted">Submit proposals, view AI feedback, track review stages</small>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary">Register</a>
+                  <a href="/login/" class="btn btn-sm btn-primary">Login</a>
+                </div>
+              </div>
+
+              <div class="p-3 bg-white rounded-3 border d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="ag-brand-icon bg-success" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                    <i class="bi bi-mortarboard"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold mb-0">Domain Reviewer</h6>
+                    <small class="text-muted">Evaluate assigned proposals, input rubric scores, submit remarks</small>
+                  </div>
+                </div>
+                <div class="d-flex gap-2">
+                  <a href="/reviewer_registration/" class="btn btn-sm btn-outline-success">Register</a>
+                  <a href="/login/" class="btn btn-sm btn-success">Login</a>
+                </div>
+              </div>
+
+              <div class="p-3 bg-white rounded-3 border d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="ag-brand-icon bg-dark" style="width: 40px; height: 40px; font-size: 1.1rem;">
+                    <i class="bi bi-shield-lock"></i>
+                  </div>
+                  <div>
+                    <h6 class="fw-bold mb-0">Grant Committee / Admin</h6>
+                    <small class="text-muted">Manage calls, oversee AI audits, approve funding rounds</small>
+                  </div>
+                </div>
+                <div>
+                  <a href="/login/" class="btn btn-sm btn-dark">Admin Console</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="py-5" style="background: linear-gradient(135deg, #0d6efd 0%, #0a4fba 100%); color: white;">
+    <div class="container py-4 text-center">
+      <h2 class="fw-bold fs-1 mb-3">Ready to Submit or Review Proposals?</h2>
+      <p class="lead text-white-50 max-w-xl mx-auto mb-4">
+        Join hundreds of researchers and scientific reviewers on the nation's premier automated grant evaluation network.
       </p>
-    </div>
-
-    <div class="row g-4">
-      <!-- Feature 1 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="feature-card">
-          <div class="feature-icon-wrap">
-            <i class="bi bi-cpu"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Automated NLP Pre-Screening</h5>
-          <p class="text-muted small mb-3">
-            Analyzes proposal syntax, eligibility compliance, completeness of documentation, and budget calculations within minutes of submission.
-          </p>
-          <ul class="list-unstyled small text-secondary mb-0">
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Plagiarism & originality audit</li>
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Budget vs work-package coherence</li>
-            <li><i class="bi bi-check2-circle text-success me-2"></i> Guideline format verification</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Feature 2 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="feature-card">
-          <div class="feature-icon-wrap">
-            <i class="bi bi-person-bounding-box"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Smart Reviewer Matching</h5>
-          <p class="text-muted small mb-3">
-            Semantic topic modeling compares proposal abstracts and keywords against reviewer publication records and expertise domains without conflict of interest.
-          </p>
-          <ul class="list-unstyled small text-secondary mb-0">
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Automated conflict-of-interest detection</li>
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Workload & reviewer availability balancing</li>
-            <li><i class="bi bi-check2-circle text-success me-2"></i> Domain relevance score generation</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Feature 3 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="feature-card">
-          <div class="feature-icon-wrap">
-            <i class="bi bi-sliders2-vertical"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Multi-Criteria Rubric Scoring</h5>
-          <p class="text-muted small mb-3">
-            Calibrated scoring across Technical Merit, Methodological Rigor, Societal & Economic Impact, and Resource Feasibility.
-          </p>
-          <ul class="list-unstyled small text-secondary mb-0">
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Standardized quantitative rubrics</li>
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Weighted AI recommendation score</li>
-            <li><i class="bi bi-check2-circle text-success me-2"></i> Comprehensive qualitative feedback</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Feature 4 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="feature-card">
-          <div class="feature-icon-wrap">
-            <i class="bi bi-shield-check"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Double-Blind & Bias Mitigation</h5>
-          <p class="text-muted small mb-3">
-            Protects researchers from gender, institutional, and geographic evaluation biases through automated anonymization during peer review.
-          </p>
-          <ul class="list-unstyled small text-secondary mb-0">
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Automated entity de-identification</li>
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Blinded peer review workspace</li>
-            <li><i class="bi bi-check2-circle text-success me-2"></i> Transparent decision audit log</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Feature 5 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="feature-card">
-          <div class="feature-icon-wrap">
-            <i class="bi bi-speedometer"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Real-Time Evaluation Dashboards</h5>
-          <p class="text-muted small mb-3">
-            Dedicated portals for Applicants, Reviewers, and Funding Administrators with real-time analytics, notifications, and review queues.
-          </p>
-          <ul class="list-unstyled small text-secondary mb-0">
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Applicant lifecycle tracking</li>
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Reviewer evaluation worksheets</li>
-            <li><i class="bi bi-check2-circle text-success me-2"></i> Admin cohort ranking & awards</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Feature 6 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="feature-card">
-          <div class="feature-icon-wrap">
-            <i class="bi bi-file-earmark-check"></i>
-          </div>
-          <h5 class="fw-bold mb-2">Actionable Feedback Generation</h5>
-          <p class="text-muted small mb-3">
-            Unsuccessful and funded applicants receive structured, constructive critiques and AI-synthesized improvement suggestions for future cycles.
-          </p>
-          <ul class="list-unstyled small text-secondary mb-0">
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Detailed rubric score breakdown</li>
-            <li class="mb-1"><i class="bi bi-check2-circle text-success me-2"></i> Reviewer consensus commentary</li>
-            <li><i class="bi bi-check2-circle text-success me-2"></i> Resubmission enhancement hints</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Pipeline Section -->
-<section id="pipeline" class="py-5 bg-white border-top border-bottom">
-  <div class="container py-4">
-    <div class="text-center mb-5">
-      <span class="badge bg-success-subtle text-success fw-semibold px-3 py-1 mb-2">END-TO-END WORKFLOW</span>
-      <h2 class="fw-bold fs-1 mb-3">The AI Evaluation Lifecycle</h2>
-      <p class="text-muted max-w-xl mx-auto">From initial document upload to final award disbursement, every stage is structured and auditable.</p>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-lg-3 col-md-6">
-        <div class="step-node">
-          <div class="step-num">01</div>
-          <h5 class="fw-bold mb-2">Proposal Submission</h5>
-          <p class="text-muted small mb-0">
-            Applicant fills required metadata, uploads research proposal PDF, budget ledger, and timeline milestones through the Applicant Portal.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6">
-        <div class="step-node">
-          <div class="step-num" style="background: #0d6efd; color: white;">02</div>
-          <h5 class="fw-bold mb-2">AI Pre-Evaluation</h5>
-          <p class="text-muted small mb-0">
-            System runs semantic parsing, compliance check, novelty evaluation, and generates an initial composite AI score (0-100).
-          </p>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6">
-        <div class="step-node">
-          <div class="step-num" style="background: #1bbd36; color: white;">03</div>
-          <h5 class="fw-bold mb-2">Expert Peer Review</h5>
-          <p class="text-muted small mb-0">
-            Matched domain reviewers access anonymized proposals, examine AI suggestions, and grade against calibrated rubrics with detailed notes.
-          </p>
-        </div>
-      </div>
-
-      <div class="col-lg-3 col-md-6">
-        <div class="step-node">
-          <div class="step-num" style="background: #0f172a; color: #4ade80;">04</div>
-          <h5 class="fw-bold mb-2">Decision & Award</h5>
-          <p class="text-muted small mb-0">
-            Admin console aggregates AI confidence + reviewer consensus to rank submissions, disburse grants, and issue transparent feedback reports.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Active Grant Calls Section -->
-<section id="grants" class="py-5">
-  <div class="container py-4">
-    <div class="d-flex flex-wrap justify-content-between align-items-end mb-4">
-      <div>
-        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 mb-2">OPEN FUNDING ROUNDS</span>
-        <h2 class="fw-bold mb-1">Active Grant Schemes & Calls</h2>
-        <p class="text-muted small mb-0">Submit your research proposals before upcoming deadline cycles</p>
-      </div>
-      <div>
-        <a href="/applicant_registration/" class="btn btn-outline-primary btn-sm">
-          Register & Apply Now <i class="bi bi-arrow-right ms-1"></i>
+      <div class="d-flex justify-content-center gap-3">
+        <a href="/applicant_registration/" class="btn btn-light text-primary fw-bold px-4 py-2">
+          <i class="bi bi-file-earmark-plus me-1"></i> Register as Applicant
+        </a>
+        <a href="/reviewer_registration/" class="btn btn-outline-light fw-bold px-4 py-2">
+          <i class="bi bi-mortarboard me-1"></i> Become a Reviewer
         </a>
       </div>
     </div>
+  </section>
 
-    <div class="row g-4">
-      <!-- Grant 1 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="grant-card">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <span class="badge bg-success">Open for Submissions</span>
-            <span class="fw-bold text-primary">$150,000</span>
+  <!-- Footer -->
+  <footer class="ag-footer">
+    <div class="container">
+      <div class="row g-4 mb-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="ag-brand-icon" style="width: 36px; height: 36px; font-size: 1.1rem;">
+              <i class="bi bi-award-fill"></i>
+            </div>
+            <h5 class="mb-0 text-white">AGPES</h5>
           </div>
-          <h5 class="fw-bold mb-2">Clean Energy & Smart Grid Innovations 2026</h5>
-          <p class="text-muted small flex-grow-1">
-            Grants for research on next-generation battery chemistries, decentralized microgrid software, and green hydrogen storage systems.
+          <p class="small text-secondary">
+            Automated Grant Proposal Evaluation System leverages artificial intelligence, NLP, and intelligent peer-matching algorithms to deliver unbiased, transparent, and accelerated research funding evaluation.
           </p>
-          <div class="border-top pt-3 mt-3 text-muted small">
-            <div class="d-flex justify-content-between mb-1">
-              <span><i class="bi bi-calendar-event me-1"></i> Deadline:</span>
-              <strong class="text-dark">Nov 30, 2026</strong>
-            </div>
-            <div class="d-flex justify-content-between mb-3">
-              <span><i class="bi bi-people me-1"></i> Target:</span>
-              <strong class="text-dark">Universities & Startups</strong>
-            </div>
-            <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary w-100">Apply for this Grant</a>
-          </div>
+        </div>
+        <div class="col-lg-2 col-md-6">
+          <h5>Quick Portals</h5>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="/login/"><i class="bi bi-chevron-right me-1"></i> Sign In Portal</a></li>
+            <li class="mb-2"><a href="/applicant_registration/"><i class="bi bi-chevron-right me-1"></i> Grant Applicant</a></li>
+            <li class="mb-2"><a href="/reviewer_registration/"><i class="bi bi-chevron-right me-1"></i> Peer Reviewer</a></li>
+            <li class="mb-2"><a href="/admin/"><i class="bi bi-chevron-right me-1"></i> Administration</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>Evaluation Pillars</h5>
+          <ul class="list-unstyled small">
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Novelty & Technical Innovation</a></li>
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Methodology Feasibility</a></li>
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Budget Realism & Justification</a></li>
+            <li class="mb-2"><a href="#"><i class="bi bi-check2 text-success me-1"></i> Societal & Environmental Impact</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <h5>Helpdesk & Support</h5>
+          <p class="small mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i> National Science & Innovation Center</p>
+          <p class="small mb-2"><i class="bi bi-envelope me-2 text-primary"></i> grants-evaluation@agpes.org</p>
+          <p class="small mb-2"><i class="bi bi-telephone me-2 text-primary"></i> +1 (800) 247-GRANT</p>
         </div>
       </div>
-
-      <!-- Grant 2 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="grant-card">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <span class="badge bg-success">Open for Submissions</span>
-            <span class="fw-bold text-primary">$250,000</span>
-          </div>
-          <h5 class="fw-bold mb-2">AI-Driven Healthcare & Therapeutics Discovery</h5>
-          <p class="text-muted small flex-grow-1">
-            Funding foundational models for protein folding, clinical trial acceleration, and low-cost automated diagnostic tools for rural clinics.
-          </p>
-          <div class="border-top pt-3 mt-3 text-muted small">
-            <div class="d-flex justify-content-between mb-1">
-              <span><i class="bi bi-calendar-event me-1"></i> Deadline:</span>
-              <strong class="text-dark">Dec 15, 2026</strong>
-            </div>
-            <div class="d-flex justify-content-between mb-3">
-              <span><i class="bi bi-people me-1"></i> Target:</span>
-              <strong class="text-dark">Biomedical Researchers</strong>
-            </div>
-            <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary w-100">Apply for this Grant</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Grant 3 -->
-      <div class="col-lg-4 col-md-6">
-        <div class="grant-card">
-          <div class="d-flex justify-content-between align-items-start mb-2">
-            <span class="badge bg-warning text-dark">Closing Soon</span>
-            <span class="fw-bold text-primary">$100,000</span>
-          </div>
-          <h5 class="fw-bold mb-2">Sustainable Agriculture & Climate Resilience</h5>
-          <p class="text-muted small flex-grow-1">
-            Support for precision farming IoT sensors, drought-resistant crop engineering, and regenerative soil restoration research.
-          </p>
-          <div class="border-top pt-3 mt-3 text-muted small">
-            <div class="d-flex justify-content-between mb-1">
-              <span><i class="bi bi-calendar-event me-1"></i> Deadline:</span>
-              <strong class="text-danger">Oct 31, 2026</strong>
-            </div>
-            <div class="d-flex justify-content-between mb-3">
-              <span><i class="bi bi-people me-1"></i> Target:</span>
-              <strong class="text-dark">Agritech Research Labs</strong>
-            </div>
-            <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary w-100">Apply for this Grant</a>
-          </div>
-        </div>
+      <div class="pt-3 border-top border-secondary text-center small text-secondary">
+        <p class="mb-0">© 2026 Automated Grant Proposal Evaluation System (AGPES). All Rights Reserved.</p>
       </div>
     </div>
-  </div>
-</section>
+  </footer>
 
-<!-- Rubric & Evaluation Standard Section -->
-<section class="py-5 bg-white border-top">
-  <div class="container py-4">
-    <div class="row align-items-center g-5">
-      <div class="col-lg-6">
-        <span class="badge bg-primary-subtle text-primary fw-semibold px-3 py-1 mb-2">SCORING RUBRIC</span>
-        <h2 class="fw-bold mb-3">Standardized, Transparent Rubrics</h2>
-        <p class="text-muted">
-          Our dual-layer scoring model harmonizes AI algorithmic evaluation with human peer reviewer domain judgment across 4 key dimensions:
-        </p>
+  <!-- Vendor JS Files -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
+  <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
+  <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
 
-        <div class="mb-3">
-          <div class="d-flex justify-content-between small fw-semibold">
-            <span>Technical Innovation & Novelty</span>
-            <span class="text-primary">30% Weight</span>
-          </div>
-          <div class="rubric-bar">
-            <div class="rubric-fill bg-primary" style="width: 30%"></div>
-          </div>
-          <small class="text-muted">Assesses scientific originality, state-of-the-art advancement, and prior-art comparison.</small>
-        </div>
+  <!-- Main JS File -->
+  <script src="{% static 'assets/js/main.js' %}"></script>
+</body>
 
-        <div class="mb-3">
-          <div class="d-flex justify-content-between small fw-semibold">
-            <span>Methodological Rigor & Feasibility</span>
-            <span class="text-info">25% Weight</span>
-          </div>
-          <div class="rubric-bar">
-            <div class="rubric-fill bg-info" style="width: 25%"></div>
-          </div>
-          <small class="text-muted">Evaluates experimental plan, team capabilities, timeline, and contingency risk buffers.</small>
-        </div>
-
-        <div class="mb-3">
-          <div class="d-flex justify-content-between small fw-semibold">
-            <span>Budget Justification & Realism</span>
-            <span class="text-warning">25% Weight</span>
-          </div>
-          <div class="rubric-bar">
-            <div class="rubric-fill bg-warning" style="width: 25%"></div>
-          </div>
-          <small class="text-muted">Cross-checks equipment expenses, personnel costs, and benchmarked market rates.</small>
-        </div>
-
-        <div class="mb-3">
-          <div class="d-flex justify-content-between small fw-semibold">
-            <span>Societal & Environmental Impact</span>
-            <span class="text-success">20% Weight</span>
-          </div>
-          <div class="rubric-bar">
-            <div class="rubric-fill bg-success" style="width: 20%"></div>
-          </div>
-          <small class="text-muted">Projects long-term public benefit, sustainability contribution, and commercialization potential.</small>
-        </div>
-      </div>
-
-      <div class="col-lg-6">
-        <div class="p-4 rounded-4 shadow-sm" style="background: #f8fafc; border: 1px solid #e2e8f0;">
-          <h5 class="fw-bold mb-3"><i class="bi bi-shield-shaded text-primary me-2"></i> Role-Based Access Portals</h5>
-          <p class="text-muted small mb-4">
-            Select your portal to log in or register based on your role within the grant evaluation ecosystem:
-          </p>
-
-          <div class="d-flex flex-column gap-3">
-            <div class="p-3 bg-white rounded-3 border d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center gap-3">
-                <div class="ag-brand-icon bg-primary" style="width: 40px; height: 40px; font-size: 1.1rem;">
-                  <i class="bi bi-person"></i>
-                </div>
-                <div>
-                  <h6 class="fw-bold mb-0">Grant Applicant</h6>
-                  <small class="text-muted">Submit proposals, view AI feedback, track review stages</small>
-                </div>
-              </div>
-              <div class="d-flex gap-2">
-                <a href="/applicant_registration/" class="btn btn-sm btn-outline-primary">Register</a>
-                <a href="/login/" class="btn btn-sm btn-primary">Login</a>
-              </div>
-            </div>
-
-            <div class="p-3 bg-white rounded-3 border d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center gap-3">
-                <div class="ag-brand-icon bg-success" style="width: 40px; height: 40px; font-size: 1.1rem;">
-                  <i class="bi bi-mortarboard"></i>
-                </div>
-                <div>
-                  <h6 class="fw-bold mb-0">Domain Reviewer</h6>
-                  <small class="text-muted">Evaluate assigned proposals, input rubric scores, submit remarks</small>
-                </div>
-              </div>
-              <div class="d-flex gap-2">
-                <a href="/reviewer_registration/" class="btn btn-sm btn-outline-success">Register</a>
-                <a href="/login/" class="btn btn-sm btn-success">Login</a>
-              </div>
-            </div>
-
-            <div class="p-3 bg-white rounded-3 border d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center gap-3">
-                <div class="ag-brand-icon bg-dark" style="width: 40px; height: 40px; font-size: 1.1rem;">
-                  <i class="bi bi-shield-lock"></i>
-                </div>
-                <div>
-                  <h6 class="fw-bold mb-0">Grant Committee / Admin</h6>
-                  <small class="text-muted">Manage calls, oversee AI audits, approve funding rounds</small>
-                </div>
-              </div>
-              <div>
-                <a href="/login/" class="btn btn-sm btn-dark">Admin Console</a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- CTA Section -->
-<section class="py-5" style="background: linear-gradient(135deg, #0d6efd 0%, #0a4fba 100%); color: white;">
-  <div class="container py-4 text-center">
-    <h2 class="fw-bold fs-1 mb-3">Ready to Submit or Review Proposals?</h2>
-    <p class="lead text-white-50 max-w-xl mx-auto mb-4">
-      Join hundreds of researchers and scientific reviewers on the nation's premier automated grant evaluation network.
-    </p>
-    <div class="d-flex justify-content-center gap-3">
-      <a href="/applicant_registration/" class="btn btn-light text-primary fw-bold px-4 py-2">
-        <i class="bi bi-file-earmark-plus me-1"></i> Register as Applicant
-      </a>
-      <a href="/reviewer_registration/" class="btn btn-outline-light fw-bold px-4 py-2">
-        <i class="bi bi-mortarboard me-1"></i> Become a Reviewer
-      </a>
-    </div>
-  </div>
-</section>
-{% endblock %}
+</html>
