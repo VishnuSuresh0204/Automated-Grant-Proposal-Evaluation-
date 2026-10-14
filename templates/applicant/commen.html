@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Applicant Portal | Automated Grant Proposal Evaluation{% endblock %}</title>
+
+  <!-- Favicons -->
+  <link href="{% static 'assets/img/favicon.png' %}" rel="icon">
+  <link href="{% static 'assets/img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Raleway:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'assets/css/main.css' %}" rel="stylesheet">
+
+  <style>
+    :root {
+      --applicant-primary: #0d6efd;
+      --applicant-dark: #0f172a;
+      --applicant-surface: #f8fafc;
+      --applicant-border: #e2e8f0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--applicant-surface);
+      color: #334155;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .applicant-topbar {
+      background: #0f172a;
+      color: #94a3b8;
+      font-size: 0.85rem;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .applicant-topbar a {
+      color: #cbd5e1;
+      text-decoration: none;
+    }
+
+    .applicant-navbar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--applicant-border);
+      box-shadow: 0 4px 16px rgba(15, 23, 42, 0.05);
+      padding: 12px 0;
+    }
+
+    .applicant-brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0d6efd 0%, #0a4fba 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 12px rgba(13, 110, 253, 0.25);
+    }
+
+    .nav-link-applicant {
+      font-weight: 500;
+      font-size: 0.92rem;
+      color: #334155 !important;
+      padding: 8px 14px !important;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav-link-applicant:hover,
+    .nav-link-applicant.active {
+      color: #0d6efd !important;
+      background: #eff6ff;
+    }
+
+    .btn-gradient-primary {
+      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+      color: #ffffff !important;
+      border: none;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .applicant-footer {
+      margin-top: auto;
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 24px 0;
+      font-size: 0.85rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+  <!-- Applicant Top Strip -->
+  <div class="applicant-topbar">
+    <div class="container d-flex justify-content-between align-items-center">
+      <div>
+        <span><i class="bi bi-shield-check text-success me-1"></i> Principal Investigator Workspace</span>
+        <span class="d-none d-md-inline text-muted ms-2">| Automated Grant Proposal Evaluation</span>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <span class="text-white small">
+          <i class="bi bi-person-circle me-1"></i> {{ request.session.username|default:"Applicant" }}
+          <span class="badge bg-primary ms-1">Grant Applicant</span>
+        </span>
+        <a href="/" class="text-secondary small"><i class="bi bi-globe me-1"></i> Public Site</a>
+        <a href="/logout/" class="text-danger small fw-semibold"><i class="bi bi-box-arrow-right"></i> Logout</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Applicant Navigation -->
+  <nav class="navbar navbar-expand-lg applicant-navbar sticky-top">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="/applicant/">
+        <div class="applicant-brand-icon">
+          <i class="bi bi-person-workspace"></i>
+        </div>
+        <div>
+          <span class="fw-bold fs-5 text-dark">AGPES</span>
+          <span class="badge bg-primary-subtle text-primary ms-2 small">Applicant Portal</span>
+        </div>
+      </a>
+
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#applicantNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="applicantNav">
+        <ul class="navbar-nav me-auto ms-lg-4">
+          <li class="nav-item">
+            <a class="nav-link nav-link-applicant active" href="/applicant/"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-applicant" href="/applicant/#proposals"><i class="bi bi-file-earmark-text me-1"></i> My Proposals</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-applicant" href="/#grants"><i class="bi bi-briefcase me-1"></i> Funding Calls</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-applicant" href="/#about"><i class="bi bi-info-circle me-1"></i> Evaluation Guidelines</a>
+          </li>
+        </ul>
+
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-gradient-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#newProposalModal">
+            <i class="bi bi-plus-circle me-1"></i> Submit Proposal
+          </button>
+          <a href="/logout/" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i></a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  <div class="container mt-3">
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+
+  <!-- Content Block -->
+  <main class="flex-grow-1">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Applicant Footer -->
+  <footer class="applicant-footer">
+    <div class="container d-flex flex-wrap justify-content-between align-items-center">
+      <div>
+        <p class="mb-0 text-secondary">© 2026 AGPES Applicant Portal • Automated Grant Proposal Evaluation System</p>
+      </div>
+      <div>
+        <span class="text-secondary small"><i class="bi bi-shield-lock-fill text-success me-1"></i> 256-bit Encrypted Research Workspace</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vendor JS -->
+  <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>
