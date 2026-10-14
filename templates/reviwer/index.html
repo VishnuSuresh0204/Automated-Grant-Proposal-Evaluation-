@@ -1,0 +1,348 @@
+{% extends 'commen.html' %}
+{% load static %}
+
+{% block title %}Reviewer Workspace | Automated Grant Proposal Evaluation{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Top Welcome Header -->
+  <div class="row align-items-center mb-4 g-3">
+    <div class="col-md-7">
+      <div class="d-flex align-items-center gap-3">
+        <div class="ag-brand-icon bg-success" style="width: 56px; height: 56px; font-size: 1.6rem; background: linear-gradient(135deg, #198754 0%, #157347 100%);">
+          <i class="bi bi-mortarboard-fill"></i>
+        </div>
+        <div>
+          <h3 class="fw-bold mb-1">
+            Reviewer Workspace: {% if request.session.username %}{{ request.session.username }}{% else %}Expert Reviewer{% endif %}
+          </h3>
+          <p class="text-muted small mb-0">
+            <i class="bi bi-check-circle-fill text-success me-1"></i> Peer Review Portal • AI-augmented rubric scoring, semantic insights & recommendation ledger
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5 text-md-end">
+      <span class="badge bg-success-subtle text-success px-3 py-2 border border-success-subtle me-2">
+        <i class="bi bi-patch-check-fill me-1"></i> Verified Scientific Reviewer
+      </span>
+      <a href="/logout/" class="btn btn-outline-danger btn-sm">
+        <i class="bi bi-box-arrow-right"></i> Logout
+      </a>
+    </div>
+  </div>
+
+  <!-- Reviewer Metric Cards -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Assigned Proposals</span>
+          <span class="badge bg-primary-subtle text-primary"><i class="bi bi-journal-text"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1">4</h2>
+        <small class="text-muted">Matched by AI topic engine</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Pending Review</span>
+          <span class="badge bg-warning-subtle text-warning"><i class="bi bi-hourglass-top"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1 text-warning">2</h2>
+        <small class="text-muted">Due within 14 days</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Completed Rubrics</span>
+          <span class="badge bg-success-subtle text-success"><i class="bi bi-check2-all"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1 text-success">2</h2>
+        <small class="text-muted">Consensus submitted</small>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-6">
+      <div class="card border-0 shadow-sm rounded-3 p-3 bg-white">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="text-muted small fw-semibold text-uppercase">Avg Score Given</span>
+          <span class="badge bg-info-subtle text-info"><i class="bi bi-speedometer2"></i></span>
+        </div>
+        <h2 class="fw-bold mb-1 text-info">86.5</h2>
+        <small class="text-muted">Calibrated against cohort</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Review Queue -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-8">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center border-bottom">
+          <h5 class="fw-bold mb-0"><i class="bi bi-list-check text-success me-2"></i> Assigned Proposals Queue</h5>
+          <span class="badge bg-light text-dark border">Double-Blind Anonymous Review</span>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light small text-uppercase text-secondary">
+              <tr>
+                <th>Proposal ID & Anonymous Abstract</th>
+                <th>Topic & AI Match</th>
+                <th>AI Pre-Score</th>
+                <th>Status</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Item 1 -->
+              <tr>
+                <td>
+                  <span class="badge bg-secondary font-monospace">ANON-GP-2026-0842</span>
+                  <div class="fw-bold text-dark mt-1">Autonomous Microgrid Balancing with Deep Reinforcement Learning</div>
+                  <small class="text-muted">Funding Call: Clean Energy Innovations • Requested: $150,000</small>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">Smart Energy</span>
+                  <div class="small text-success mt-1 fw-semibold"><i class="bi bi-bullseye"></i> 96% Match</div>
+                </td>
+                <td>
+                  <span class="fw-bold text-success">91/100</span>
+                  <div class="x-small text-muted" style="font-size: 0.72rem;">Novelty: 94%</div>
+                </td>
+                <td>
+                  <span class="badge bg-warning-subtle text-warning px-2 py-1"><i class="bi bi-clock me-1"></i> Review Needed</span>
+                  <div class="x-small text-danger mt-1" style="font-size: 0.7rem;">Deadline: 5 Days</div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#rubricModal">
+                    <i class="bi bi-pencil-square me-1"></i> Grade Rubric
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Item 2 -->
+              <tr>
+                <td>
+                  <span class="badge bg-secondary font-monospace">ANON-GP-2026-1104</span>
+                  <div class="fw-bold text-dark mt-1">Cryogenic CMOS Sensor for High-Fidelity Quantum Readout</div>
+                  <small class="text-muted">Funding Call: Quantum Computing • Requested: $220,000</small>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">Quantum Circuitry</span>
+                  <div class="small text-success mt-1 fw-semibold"><i class="bi bi-bullseye"></i> 91% Match</div>
+                </td>
+                <td>
+                  <span class="fw-bold text-primary">87/100</span>
+                  <div class="x-small text-muted" style="font-size: 0.72rem;">Novelty: 89%</div>
+                </td>
+                <td>
+                  <span class="badge bg-warning-subtle text-warning px-2 py-1"><i class="bi bi-clock me-1"></i> Review Needed</span>
+                  <div class="x-small text-muted mt-1" style="font-size: 0.7rem;">Deadline: 12 Days</div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#rubricModal">
+                    <i class="bi bi-pencil-square me-1"></i> Grade Rubric
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Item 3 -->
+              <tr>
+                <td>
+                  <span class="badge bg-secondary font-monospace">ANON-GP-2026-0377</span>
+                  <div class="fw-bold text-dark mt-1">Multi-Omics Spatial Transcriptomics for Neurodegeneration</div>
+                  <small class="text-muted">Funding Call: AI Therapeutics • Requested: $280,000</small>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">Biomedical AI</span>
+                  <div class="small text-success mt-1 fw-semibold"><i class="bi bi-bullseye"></i> 88% Match</div>
+                </td>
+                <td>
+                  <span class="fw-bold text-success">93/100</span>
+                  <div class="x-small text-muted" style="font-size: 0.72rem;">Novelty: 95%</div>
+                </td>
+                <td>
+                  <span class="badge bg-success-subtle text-success px-2 py-1"><i class="bi bi-check2-circle me-1"></i> Completed</span>
+                  <div class="x-small text-success mt-1" style="font-size: 0.7rem;">Graded: 92/100</div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#rubricModal">
+                    <i class="bi bi-eye me-1"></i> View Entry
+                  </button>
+                </td>
+              </tr>
+
+              <!-- Item 4 -->
+              <tr>
+                <td>
+                  <span class="badge bg-secondary font-monospace">ANON-GP-2026-0210</span>
+                  <div class="fw-bold text-dark mt-1">Thermochemical Recycling of Mixed Polyolefin Plastics</div>
+                  <small class="text-muted">Funding Call: Sustainable Tech • Requested: $135,000</small>
+                </td>
+                <td>
+                  <span class="badge bg-light text-dark border">Polymer Science</span>
+                  <div class="small text-success mt-1 fw-semibold"><i class="bi bi-bullseye"></i> 85% Match</div>
+                </td>
+                <td>
+                  <span class="fw-bold text-info">82/100</span>
+                  <div class="x-small text-muted" style="font-size: 0.72rem;">Novelty: 81%</div>
+                </td>
+                <td>
+                  <span class="badge bg-success-subtle text-success px-2 py-1"><i class="bi bi-check2-circle me-1"></i> Completed</span>
+                  <div class="x-small text-success mt-1" style="font-size: 0.7rem;">Graded: 81/100</div>
+                </td>
+                <td class="text-end">
+                  <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#rubricModal">
+                    <i class="bi bi-eye me-1"></i> View Entry
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviewer AI Assistant Side Panel -->
+    <div class="col-lg-4">
+      <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h6 class="fw-bold mb-3"><i class="bi bi-cpu-fill text-primary me-2"></i> AI Pre-Evaluation Highlights</h6>
+        <div class="p-3 bg-light rounded-3 mb-3 border">
+          <span class="badge bg-primary mb-1">Selected: ANON-GP-2026-0842</span>
+          <p class="x-small text-muted mb-2" style="font-size: 0.8rem;">
+            The automated pre-screener analyzed 38 pages of text and equations:
+          </p>
+          <ul class="list-unstyled x-small text-secondary mb-0" style="font-size: 0.78rem;">
+            <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> <strong>Originality:</strong> 94% similarity distance to known arXiv/IEEE articles.</li>
+            <li class="mb-1"><i class="bi bi-check-circle-fill text-success me-1"></i> <strong>Budget Check:</strong> Personnel 52%, Hardware 34%, Travel 14% (Passes norms).</li>
+            <li class="mb-0"><i class="bi bi-exclamation-triangle-fill text-warning me-1"></i> <strong>Note:</strong> Suggest checking scaling feasibility for grids > 50 MW.</li>
+          </ul>
+        </div>
+
+        <h6 class="fw-bold mb-2">Reviewer Ethics Code:</h6>
+        <p class="x-small text-muted mb-0" style="font-size: 0.78rem;">
+          Reviews are strictly double-blind. Do not attempt to identify institutional affiliations. Declare any direct conflicts to the admin panel immediately.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Rubric Scoring Worksheet -->
+<div class="modal fade" id="rubricModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content rounded-4 border-0 shadow-lg">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square me-2"></i> Peer Review Evaluation Rubric</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <div class="p-3 bg-light rounded-3 mb-4 border d-flex justify-content-between align-items-center">
+          <div>
+            <span class="badge bg-secondary font-monospace">ANON-GP-2026-0842</span>
+            <h6 class="fw-bold mb-0 mt-1">Autonomous Microgrid Balancing with Deep Reinforcement Learning</h6>
+          </div>
+          <div class="text-end">
+            <span class="badge bg-success-subtle text-success">AI Pre-Score: 91/100</span>
+          </div>
+        </div>
+
+        <form onsubmit="event.preventDefault(); alert('Evaluation and rubric scores submitted successfully to Grant Evaluation Board!'); location.reload();">
+          <!-- Criterion 1 -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-bold small text-dark mb-0">1. Technical Innovation & Scientific Novelty (Max 30 pts)</label>
+              <span class="badge bg-primary" id="val1">28 pts</span>
+            </div>
+            <input type="range" class="form-range" min="0" max="30" value="28" oninput="document.getElementById('val1').innerText = this.value + ' pts'; updateTotal();">
+            <small class="text-muted d-block">Does the proposal introduce significant advancements beyond established state-of-the-art methods?</small>
+          </div>
+
+          <!-- Criterion 2 -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-bold small text-dark mb-0">2. Methodological Rigor & Technical Feasibility (Max 25 pts)</label>
+              <span class="badge bg-info" id="val2">23 pts</span>
+            </div>
+            <input type="range" class="form-range" min="0" max="25" value="23" oninput="document.getElementById('val2').innerText = this.value + ' pts'; updateTotal();">
+            <small class="text-muted d-block">Are the experimental hypotheses, mathematical foundations, and milestone timelines solid and realistic?</small>
+          </div>
+
+          <!-- Criterion 3 -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-bold small text-dark mb-0">3. Budget Justification & Cost Realism (Max 25 pts)</label>
+              <span class="badge bg-warning" id="val3">22 pts</span>
+            </div>
+            <input type="range" class="form-range" min="0" max="25" value="22" oninput="document.getElementById('val3').innerText = this.value + ' pts'; updateTotal();">
+            <small class="text-muted d-block">Is the funding requested commensurate with the work packages, personnel, and equipment needed?</small>
+          </div>
+
+          <!-- Criterion 4 -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+              <label class="form-label fw-bold small text-dark mb-0">4. Societal, Economic & Environmental Impact (Max 20 pts)</label>
+              <span class="badge bg-success" id="val4">18 pts</span>
+            </div>
+            <input type="range" class="form-range" min="0" max="20" value="18" oninput="document.getElementById('val4').innerText = this.value + ' pts'; updateTotal();">
+            <small class="text-muted d-block">Potential for sustainable real-world deployment, public good, or commercial translation.</small>
+          </div>
+
+          <div class="p-3 bg-light rounded-3 mb-4 border d-flex justify-content-between align-items-center">
+            <h6 class="fw-bold mb-0">Total Calibrated Score:</h6>
+            <div class="fs-4 fw-bold text-success" id="totalScore">91 / 100</div>
+          </div>
+
+          <!-- Recommendation -->
+          <div class="mb-3">
+            <label class="form-label fw-bold small">Final Funding Recommendation <span class="text-danger">*</span></label>
+            <select class="form-select" required>
+              <option value="Strong Accept" selected>Strong Accept (High Priority for Award)</option>
+              <option value="Accept">Accept (Fund if Budget Permits)</option>
+              <option value="Revisions Required">Minor Revisions Required</option>
+              <option value="Reject">Reject (Does not meet evaluation threshold)</option>
+            </select>
+          </div>
+
+          <!-- Qualitative Critique -->
+          <div class="mb-3">
+            <label class="form-label fw-bold small">Constructive Feedback to Principal Investigator <span class="text-danger">*</span></label>
+            <textarea class="form-control" rows="3" placeholder="Provide detailed scientific critique, strengths, and areas for improvement..." required>The mathematical derivation in Section 3 is rigorous and the multi-agent reinforcement learning architecture provides a genuine advancement over current droop control systems. Highly recommend funding with suggested testing on real microgrid hardware.</textarea>
+          </div>
+
+          <!-- Confidential Notes -->
+          <div class="mb-4">
+            <label class="form-label fw-bold small text-secondary">Confidential Notes to Grant Selection Committee (Optional)</label>
+            <textarea class="form-control" rows="2" placeholder="Private notes visible only to the grant administration board..."></textarea>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check-circle me-1"></i> Submit Final Review
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function updateTotal() {
+    const v1 = parseInt(document.getElementById('val1').innerText) || 0;
+    const v2 = parseInt(document.getElementById('val2').innerText) || 0;
+    const v3 = parseInt(document.getElementById('val3').innerText) || 0;
+    const v4 = parseInt(document.getElementById('val4').innerText) || 0;
+    const total = v1 + v2 + v3 + v4;
+    document.getElementById('totalScore').innerText = total + ' / 100';
+  }
+</script>
+{% endblock %}
