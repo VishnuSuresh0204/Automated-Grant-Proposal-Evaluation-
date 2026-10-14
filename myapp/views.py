@@ -6,16 +6,43 @@ from django.contrib.auth.decorators import login_required
 from myapp.models import *
 
 def home(request):
-    return render(request,"index.html")
+    return render(request, "index.html")
 
 def applicant_home(request):
-    return render(request,"applicant/index.html")
+    proposals_count = 3
+    context = {
+        'total_proposals': proposals_count,
+        'username': request.session.get('username', 'Applicant'),
+    }
+    return render(request, "applicant/index.html", context)
 
 def admin_home(request):
-    return render(request,"admin/index.html")
+    total_reviewers_db = Login.objects.filter(user_type='Reviewer').count()
+    total_applicants_db = Login.objects.filter(user_type='Applicant').count()
+
+    context = {
+        'total_proposals': 148,
+        'total_reviewers': total_reviewers_db if total_reviewers_db > 0 else 42,
+        'total_applicants': total_applicants_db if total_applicants_db > 0 else 89,
+        'total_screened': 136,
+        'total_funds': "4.85M",
+        'status_counts': {
+            'Screening': 12,
+            'Reviewing': 64,
+            'Consensus': 46,
+            'Awarded': 26,
+        }
+    }
+    return render(request, "admin/admin_home.html", context)
 
 def reviewr_home(request):
-    return render(request,"reviwer/index.html")
+    context = {
+        'username': request.session.get('username', 'Reviewer'),
+        'assigned_count': 4,
+        'completed_count': 2,
+    }
+    return render(request, "reviwer/index.html", context)
+
 
 
 
@@ -149,11 +176,11 @@ def login(request):
             request.session['usertype'] = user.user_type
 
             if user.user_type == 'Admin':
-                return redirect('/admin')
+                return redirect('/admin/')
             elif user.user_type == 'Applicant':
-                return redirect('/applicant')
+                return redirect('/applicant/')
             elif user.user_type == 'Reviewer':
-                return redirect('reviewer')
+                return redirect('/reviewer/')
 
         messages.error(request, 'Invalid username or password.')
 
