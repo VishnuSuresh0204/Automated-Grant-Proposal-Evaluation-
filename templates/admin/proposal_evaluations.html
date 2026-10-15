@@ -1,0 +1,300 @@
+{% extends 'admin/commen.html' %}
+{% load static %}
+
+{% block title %}Proposal #{{ proposal.id }} Evaluations Consensus | AGPES Admin Console{% endblock %}
+
+{% block content %}
+<!-- Breadcrumb & Top Bar -->
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+  <div>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-1 small">
+        <li class="breadcrumb-item"><a href="/admin/proposals/" class="text-decoration-none">Admin Proposals</a></li>
+        <li class="breadcrumb-item"><a href="/proposals/{{ proposal.id }}/" class="text-decoration-none">Proposal #{{ proposal.id }}</a></li>
+        <li class="breadcrumb-item active">Evaluations Consensus</li>
+      </ol>
+    </nav>
+    <h4 class="fw-bold text-dark mb-0"><i class="bi bi-bar-chart-fill text-primary me-2"></i> Reviewer Consensus Report</h4>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="/admin/proposals/{{ proposal.id }}/assign/" class="btn btn-outline-success btn-sm">
+      <i class="bi bi-person-plus me-1"></i> Assign Reviewer
+    </a>
+    <a href="/proposals/{{ proposal.id }}/" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-arrow-left me-1"></i> Back to Proposal
+    </a>
+  </div>
+</div>
+
+<!-- Proposal Brief -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between align-items-start mb-2 flex-wrap gap-2">
+      <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+        Proposal #{{ proposal.id }}
+      </span>
+      <span class="badge bg-light text-dark border">{{ proposal.category.category_name }}</span>
+    </div>
+    <h5 class="fw-bold text-dark mb-2">{{ proposal.title }}</h5>
+    <div class="d-flex flex-wrap gap-4 text-muted small">
+      <span><i class="bi bi-person me-1"></i> PI: <strong>{{ proposal.applicant.username }}</strong></span>
+      <span><i class="bi bi-cash-stack me-1"></i> Requested: <strong>${{ proposal.requested_budget|floatformat:2 }}</strong></span>
+      <span><i class="bi bi-calendar3 me-1"></i> Submitted: {{ proposal.submitted_at|date:"M d, Y" }}</span>
+      <span>
+        {% if proposal.status == 'Approved' %}
+          <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i> Approved</span>
+        {% elif proposal.status == 'Rejected' %}
+          <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i> Rejected</span>
+        {% elif proposal.status == 'Under Review' %}
+          <span class="badge bg-info text-white"><i class="bi bi-hourglass-split me-1"></i> Under Review</span>
+        {% elif proposal.status == 'Revision Required' %}
+          <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle-fill me-1"></i> Revision Required</span>
+        {% else %}
+          <span class="badge bg-secondary"><i class="bi bi-clock me-1"></i> Pending</span>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- Aggregated Score Banner -->
+{% if average_score is not None %}
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white">
+    <div class="card-body p-4 p-md-5">
+      <div class="row g-4 align-items-center">
+        <div class="col-md-3 text-center border-end">
+          <div class="display-3 fw-bold text-primary mb-1">
+            {{ average_score|floatformat:1 }}
+          </div>
+          <div class="text-uppercase small fw-bold text-muted" style="letter-spacing: 0.05em;">
+            Consensus Score / 10
+          </div>
+          <div class="progress mt-3" style="height: 10px; border-radius: 5px;">
+            {% widthratio average_score 10 100 as score_pct %}
+            <div class="progress-bar bg-primary" role="progressbar" style="width: {{ score_pct }}%;"></div>
+          </div>
+        </div>
+        <div class="col-md-9">
+          <div class="row g-3 text-center">
+            <div class="col-4">
+              <div class="small text-muted fw-semibold text-uppercase mb-1">Reviewers Assigned</div>
+              <div class="fs-3 fw-bold text-dark">{{ assignments.count }}</div>
+            </div>
+            <div class="col-4">
+              <div class="small text-muted fw-semibold text-uppercase mb-1">Evaluations Completed</div>
+              <div class="fs-3 fw-bold text-success">{{ evaluations.count }}</div>
+            </div>
+            <div class="col-4">
+              <div class="small text-muted fw-semibold text-uppercase mb-1">Pending Evaluations</div>
+              <div class="fs-3 fw-bold text-warning">{{ assignments.count|add:"-"|add:evaluations.count }}</div>
+            </div>
+          </div>
+
+          <!-- Recommendation Tally -->
+          <div class="mt-3 pt-3 border-top d-flex flex-wrap gap-3">
+            {% for e in evaluations %}
+              {% if e.decision == 'Recommend' %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                  <i class="bi bi-check-circle-fill me-1"></i> Recommend
+                </span>
+              {% elif e.decision == 'Not Recommend' %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2">
+                  <i class="bi bi-x-circle-fill me-1"></i> Not Recommend
+                </span>
+              {% elif e.decision == 'Revision Required' %}
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Revision Required
+                </span>
+              {% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% else %}
+  <div class="alert bg-warning-subtle border-warning-subtle text-dark rounded-4 mb-4 small d-flex align-items-center gap-3">
+    <div class="fs-4 text-warning"><i class="bi bi-hourglass-split"></i></div>
+    <div>
+      <strong>No Evaluations Submitted Yet.</strong> Assign peer reviewers above and their completed rubric scores will appear here.
+    </div>
+  </div>
+{% endif %}
+
+<!-- Individual Evaluations Cards -->
+<div class="row g-4 mb-4">
+  {% for e in evaluations %}
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white h-100">
+        <div class="card-header bg-light py-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+          <div>
+            <div class="fw-bold text-dark small"><i class="bi bi-person-check me-1 text-success"></i> Reviewer: {{ e.reviewer.username }}</div>
+            <div class="text-muted x-small">{{ e.evaluated_at|date:"F d, Y - H:i" }}</div>
+          </div>
+          {% if e.decision == 'Recommend' %}
+            <span class="badge bg-success"><i class="bi bi-check-circle-fill me-1"></i> Recommend</span>
+          {% elif e.decision == 'Not Recommend' %}
+            <span class="badge bg-danger"><i class="bi bi-x-circle-fill me-1"></i> Not Recommend</span>
+          {% elif e.decision == 'Revision Required' %}
+            <span class="badge bg-warning text-dark"><i class="bi bi-exclamation-triangle-fill me-1"></i> Revision</span>
+          {% else %}
+            <span class="badge bg-secondary">Pending</span>
+          {% endif %}
+        </div>
+
+        <div class="card-body p-4">
+          <!-- Score Breakdown -->
+          <div class="mb-3">
+            {% with scores=e %}
+              {% for label, score in e.innovation_score|floatformat:1,e.feasibility_score|floatformat:1 %}{% endfor %}
+            {% endwith %}
+            <div class="small text-muted text-uppercase fw-semibold mb-2" style="font-size: 0.72rem;">Score Breakdown</div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-secondary">Novelty & Innovation</span>
+                <span class="fw-bold text-dark">{{ e.innovation_score|floatformat:1 }} / 10</span>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 3px;">
+                {% widthratio e.innovation_score 10 100 as pct %}
+                <div class="progress-bar bg-primary" style="width: {{ pct }}%;"></div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-secondary">Scientific Feasibility</span>
+                <span class="fw-bold text-dark">{{ e.feasibility_score|floatformat:1 }} / 10</span>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 3px;">
+                {% widthratio e.feasibility_score 10 100 as pct %}
+                <div class="progress-bar bg-success" style="width: {{ pct }}%;"></div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-secondary">Broader Impact</span>
+                <span class="fw-bold text-dark">{{ e.impact_score|floatformat:1 }} / 10</span>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 3px;">
+                {% widthratio e.impact_score 10 100 as pct %}
+                <div class="progress-bar bg-info" style="width: {{ pct }}%;"></div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-secondary">Methodological Rigor</span>
+                <span class="fw-bold text-dark">{{ e.methodology_score|floatformat:1 }} / 10</span>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 3px;">
+                {% widthratio e.methodology_score 10 100 as pct %}
+                <div class="progress-bar bg-warning" style="width: {{ pct }}%;"></div>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <div class="d-flex justify-content-between small mb-1">
+                <span class="text-secondary">Budget Realism</span>
+                <span class="fw-bold text-dark">{{ e.budget_score|floatformat:1 }} / 10</span>
+              </div>
+              <div class="progress" style="height: 6px; border-radius: 3px;">
+                {% widthratio e.budget_score 10 100 as pct %}
+                <div class="progress-bar bg-danger" style="width: {{ pct }}%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Composite Score -->
+          <div class="d-flex justify-content-between align-items-center p-3 bg-light rounded-3 mb-3">
+            <span class="fw-semibold small text-dark">Composite Score:</span>
+            <span class="fs-4 fw-bold text-primary">{{ e.total_score|floatformat:2 }} / 10</span>
+          </div>
+
+          <!-- Reviewer Comments -->
+          {% if e.comments %}
+            <div>
+              <div class="small text-muted fw-semibold text-uppercase mb-2" style="font-size: 0.72rem;">
+                Peer Critique & Justification
+              </div>
+              <blockquote class="border-start border-4 border-primary ps-3 text-secondary small mb-0" style="line-height: 1.6;">
+                {{ e.comments }}
+              </blockquote>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="col-12">
+      <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+        <div class="text-muted mb-3" style="font-size: 2.5rem;">
+          <i class="bi bi-clipboard2-x"></i>
+        </div>
+        <h6 class="fw-bold text-dark">No Evaluations Submitted Yet</h6>
+        <p class="text-muted small mb-3">Reviewers have not yet submitted their scoring rubrics for this proposal.</p>
+        <div>
+          <a href="/admin/proposals/{{ proposal.id }}/assign/" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-person-plus me-1"></i> Assign Reviewers
+          </a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Reviewer Assignments Summary Table -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="card-header bg-white py-3 px-4 border-bottom">
+    <h5 class="fw-bold mb-0 text-dark">
+      <i class="bi bi-list-check text-success me-2"></i> Assignment Completion Status
+    </h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light small text-uppercase text-secondary">
+        <tr>
+          <th class="ps-4">Reviewer</th>
+          <th>Assigned Date</th>
+          <th>Evaluation</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in assignments %}
+          <tr>
+            <td class="ps-4 py-3">
+              <div class="fw-bold text-dark">{{ a.reviewer.username }}</div>
+              {% if a.reviewer.reviewer_profile %}
+                <div class="text-muted x-small">
+                  {{ a.reviewer.reviewer_profile.specialization|default:"General Academic" }}
+                </div>
+              {% endif %}
+            </td>
+            <td class="small text-muted">
+              {{ a.assigned_at|date:"M d, Y" }}
+            </td>
+            <td>
+              {% if a.is_completed %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                  <i class="bi bi-check2-circle me-1"></i> Evaluation Submitted
+                </span>
+              {% else %}
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                  <i class="bi bi-hourglass-top me-1"></i> Awaiting Submission
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3" class="text-center py-4 text-muted small">
+              No reviewer assignments found for this proposal.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
