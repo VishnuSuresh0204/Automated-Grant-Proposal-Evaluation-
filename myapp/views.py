@@ -45,6 +45,16 @@ def has_role(user, role):
     )
 
 
+def get_entity_template(user, template_name):
+    """Return the entity-specific template path based on the user's role."""
+    if is_admin(user):
+        return f"admin/{template_name}"
+    elif has_role(user, "reviewer"):
+        return f"reviewer/{template_name}"
+    else:
+        return f"applicant/{template_name}"
+
+
 def role_required(role):
     """Protect a view based on the logged-in user's role."""
 
@@ -251,7 +261,7 @@ def applicant_registration(request):
         except (IntegrityError, ValidationError) as error:
             messages.error(request, f"Registration failed: {error}")
 
-    return render(request, "applicant/applicant_registration.html")
+    return render(request, "applicant_registration.html")
 
 
 # ==========================================================
@@ -329,12 +339,12 @@ def reviewer_registration(request):
             messages.success(
                 request, "Registration successful. Please log in."
             )
-            return redirect("login")
+            return redirect("/login")
 
         except (IntegrityError, ValidationError) as error:
             messages.error(request, f"Registration failed: {error}")
 
-    return render(request, "reviewer/reviewer_registration.html")
+    return render(request, "reviewer_registration.html")
 
 
 # ==========================================================
@@ -531,9 +541,10 @@ def user_profile(request):
             user=user
         ).first()
 
+    template_name = get_entity_template(user, "profile.html")
     return render(
         request,
-        "profile.html",
+        template_name,
         {"profile": profile, "profile_user": user},
     )
 
@@ -559,7 +570,8 @@ def grant_categories(request):
         is_active=True
     ).order_by("category_name")
 
-    return render(request, "categories.html", {
+    template_name = get_entity_template(request.user, "categories.html")
+    return render(request, template_name, {
         "categories": categories,
     })
 
@@ -816,7 +828,8 @@ def proposal_details(request, proposal_id):
         "reviewer"
     ).order_by("-evaluated_at")
 
-    return render(request, "proposal_details.html", {
+    template_name = get_entity_template(request.user, "proposal_details.html")
+    return render(request, template_name, {
         "proposal": proposal,
         "analyses": analyses,
         "evaluations": evaluations,
@@ -1000,7 +1013,8 @@ def proposal_analysis_details(request, proposal_id, analysis_id=None):
         "criterion"
     ).order_by("-similarity_score")
 
-    return render(request, "proposal_analysis_details.html", {
+    template_name = get_entity_template(request.user, "proposal_analysis_details.html")
+    return render(request, template_name, {
         "proposal": proposal,
         "analysis": analysis,
         "analyses": analyses,
