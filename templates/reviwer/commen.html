@@ -138,13 +138,16 @@
       <div class="collapse navbar-collapse" id="reviewerNav">
         <ul class="navbar-nav me-auto ms-lg-4">
           <li class="nav-item">
-            <a class="nav-link nav-link-reviewer active" href="/reviewer/"><i class="bi bi-clipboard-check me-1"></i> Assigned Proposals</a>
+            <a class="nav-link nav-link-reviewer {% if request.resolver_match.url_name == 'reviewer_home' or request.resolver_match.url_name == 'reviewer' %}active{% endif %}" href="/reviewer/"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-reviewer" href="/#about"><i class="bi bi-sliders me-1"></i> Rubric Dimensions</a>
+            <a class="nav-link nav-link-reviewer {% if request.resolver_match.url_name == 'assigned_proposals' %}active{% endif %}" href="/reviewer/assigned/"><i class="bi bi-clipboard-check me-1"></i> Assigned Proposals</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-reviewer" href="/#grants"><i class="bi bi-briefcase me-1"></i> Active Calls</a>
+            <a class="nav-link nav-link-reviewer {% if request.resolver_match.url_name == 'grant_categories' %}active{% endif %}" href="/categories/"><i class="bi bi-briefcase me-1"></i> Active Calls</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link nav-link-reviewer {% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}" href="/profile/"><i class="bi bi-person-circle me-1"></i> Profile</a>
           </li>
         </ul>
 
