@@ -1,0 +1,118 @@
+{% extends 'admin/commen.html' %}
+{% load static %}
+
+{% block title %}Grant Categories & Active Funding Calls | AGPES{% endblock %}
+
+{% block content %}
+<section class="py-5">
+  <div class="container py-3">
+    <!-- Header Banner -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+      <div>
+        <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-1 mb-2">
+          <i class="bi bi-briefcase-fill me-1"></i> Active Funding Opportunities
+        </span>
+        <h2 class="fw-bold text-dark mb-1">Grant Categories & Calls for Proposals</h2>
+        <p class="text-muted small mb-0">Browse active research and innovation grant schemes managed under automated NLP triage</p>
+      </div>
+      <div>
+        {% if user.user_type|lower == "applicant" %}
+          <a href="/proposals/submit/" class="btn btn-gradient-primary">
+            <i class="bi bi-plus-circle me-1"></i> Submit Proposal
+          </a>
+        {% elif user.user_type|lower == "admin" or user.is_superuser %}
+          <a href="/admin/categories/manage/" class="btn btn-outline-primary">
+            <i class="bi bi-gear-wide-connected me-1"></i> Manage Categories
+          </a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Categories Grid -->
+    <div class="row g-4">
+      {% for category in categories %}
+        <div class="col-lg-6">
+          <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden bg-white d-flex flex-column" style="transition: transform 0.2s, box-shadow 0.2s;">
+            <div class="card-body p-4 d-flex flex-column flex-grow-1">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="ag-brand-icon" style="width: 48px; height: 48px; font-size: 1.3rem;">
+                    <i class="bi bi-cash-stack"></i>
+                  </div>
+                  <div>
+                    <h5 class="fw-bold mb-0 text-dark">{{ category.category_name }}</h5>
+                    <small class="text-muted"><i class="bi bi-calendar3 me-1"></i> Added {{ category.created_at|date:"M d, Y" }}</small>
+                  </div>
+                </div>
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">Active Call</span>
+              </div>
+
+              <p class="text-secondary small mb-3 flex-grow-1" style="line-height: 1.6;">
+                {{ category.description|linebreaksbr }}
+              </p>
+
+              {% if category.eligibility_criteria %}
+                <div class="p-3 bg-light rounded-3 mb-3 small">
+                  <div class="fw-semibold text-dark mb-1"><i class="bi bi-check2-circle text-primary me-1"></i> Eligibility Criteria</div>
+                  <div class="text-muted">{{ category.eligibility_criteria|linebreaksbr }}</div>
+                </div>
+              {% endif %}
+
+              <div class="row g-2 pt-2 border-top mt-auto small">
+                <div class="col-6">
+                  <span class="text-muted d-block">Maximum Budget:</span>
+                  <span class="fw-bold text-success fs-6">
+                    {% if category.maximum_budget > 0 %}
+                      ${{ category.maximum_budget|floatformat:2 }}
+                    {% else %}
+                      Flexible Allocation
+                    {% endif %}
+                  </span>
+                </div>
+                <div class="col-6 text-end">
+                  <span class="text-muted d-block">Submission Deadline:</span>
+                  <span class="fw-semibold text-dark">
+                    {% if category.deadline %}
+                      <i class="bi bi-clock-history text-danger me-1"></i> {{ category.deadline|date:"M d, Y" }}
+                    {% else %}
+                      <i class="bi bi-infinity text-muted me-1"></i> Rolling Review
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-center">
+              <span class="small text-muted"><i class="bi bi-cpu text-info me-1"></i> NLP Automated Rubric</span>
+              {% if user.user_type|lower == "applicant" %}
+                <a href="/proposals/submit/?category={{ category.id }}" class="btn btn-primary btn-sm px-3">
+                  <i class="bi bi-arrow-right-circle me-1"></i> Apply Scheme
+                </a>
+              {% else %}
+                <span class="text-muted small">Open for Principal Investigators</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-4 p-5 text-center bg-white">
+            <div class="mb-3 text-muted" style="font-size: 3rem;">
+              <i class="bi bi-folder-x"></i>
+            </div>
+            <h5 class="fw-bold text-dark">No Active Funding Calls at This Moment</h5>
+            <p class="text-muted small mb-3">Please check back soon or contact the grant administrator for upcoming cycles.</p>
+            {% if user.user_type|lower == "admin" or user.is_superuser %}
+              <div>
+                <a href="/admin/categories/add/" class="btn btn-primary btn-sm">
+                  <i class="bi bi-plus-circle me-1"></i> Create First Category
+                </a>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
