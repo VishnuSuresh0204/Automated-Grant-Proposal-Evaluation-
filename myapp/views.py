@@ -19,18 +19,9 @@ from pypdf import PdfReader
 from docx import Document
 from sentence_transformers import SentenceTransformer, util
 
-from .models import (
-    Login,
-    ApplicantRegistration,
-    ReviewerRegistration,
-    GrantCategory,
-    GrantProposal,
-    EvaluationCriterion,
-    ProposalAnalysis,
-    CriterionAnalysis,
-    ReviewerAssignment,
-    Evaluation,
-)
+from .models import *
+
+
 
 
 # ==========================================================
