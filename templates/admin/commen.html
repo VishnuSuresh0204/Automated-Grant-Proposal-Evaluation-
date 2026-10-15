@@ -152,23 +152,26 @@
 
     <div class="ag-sidebar-menu">
       <div class="text-uppercase x-small text-muted px-3 mb-2" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;">Administration</div>
-      <a href="/admin/" class="ag-sidebar-link active">
+      <a href="/admin/" class="ag-sidebar-link {% if request.resolver_match.url_name == 'admin_home' or request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">
         <i class="bi bi-speedometer2"></i> Dashboard Overview
       </a>
-      <a href="/admin/" class="ag-sidebar-link">
+      <a href="/admin/proposals/" class="ag-sidebar-link {% if 'proposal' in request.path and 'category' not in request.path and 'criteria' not in request.path and 'evaluation' not in request.path %}active{% endif %}">
         <i class="bi bi-file-earmark-text"></i> Grant Proposals
       </a>
-      <a href="/admin/" class="ag-sidebar-link">
-        <i class="bi bi-mortarboard"></i> Reviewer Network
+      <a href="/admin/categories/manage/" class="ag-sidebar-link {% if 'categories' in request.path %}active{% endif %}">
+        <i class="bi bi-cash-stack"></i> Grant Categories
       </a>
-      <a href="/admin/" class="ag-sidebar-link">
-        <i class="bi bi-people"></i> Applicants Roster
+      <a href="/admin/criteria/" class="ag-sidebar-link {% if 'criteria' in request.path %}active{% endif %}">
+        <i class="bi bi-sliders"></i> Rubrics & Criteria
       </a>
-      <a href="/admin/" class="ag-sidebar-link">
-        <i class="bi bi-sliders"></i> Rubric & AI Models
+      <a href="/admin/evaluations/" class="ag-sidebar-link {% if 'evaluation' in request.path %}active{% endif %}">
+        <i class="bi bi-mortarboard"></i> Review Evaluations
       </a>
-      <a href="/admin/" class="ag-sidebar-link">
-        <i class="bi bi-cash-stack"></i> Funding Allocations
+      <a href="/admin/users/" class="ag-sidebar-link {% if 'users' in request.path %}active{% endif %}">
+        <i class="bi bi-people"></i> User Management
+      </a>
+      <a href="/profile/" class="ag-sidebar-link {% if 'profile' in request.path %}active{% endif %}">
+        <i class="bi bi-person-circle"></i> Admin Profile
       </a>
 
       <div class="text-uppercase x-small text-muted px-3 mt-4 mb-2" style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em;">General</div>
