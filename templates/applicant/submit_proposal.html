@@ -1,0 +1,148 @@
+{% extends 'applicant/commen.html' %}
+{% load static %}
+
+{% block title %}Submit Research Grant Proposal | AGPES Applicant Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Breadcrumb & Header -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-1 small">
+              <li class="breadcrumb-item"><a href="/applicant/" class="text-decoration-none">Applicant Dashboard</a></li>
+              <li class="breadcrumb-item active">Submit Proposal</li>
+            </ol>
+          </nav>
+          <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-file-earmark-plus text-primary me-2"></i> Submit Grant Proposal</h3>
+        </div>
+        <a href="/proposals/my/" class="btn btn-outline-secondary btn-sm">
+          <i class="bi bi-arrow-left me-1"></i> Back to My Proposals
+        </a>
+      </div>
+
+      <!-- Main Form Card -->
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="p-4 bg-light border-bottom">
+          <div class="d-flex align-items-center gap-3">
+            <div class="ag-brand-icon" style="width: 48px; height: 48px; font-size: 1.3rem;">
+              <i class="bi bi-file-earmark-arrow-up"></i>
+            </div>
+            <div>
+              <h5 class="fw-bold mb-1 text-dark">Grant Application Form</h5>
+              <p class="text-muted small mb-0">Fill in the proposal details and upload full research narrative for automated NLP screening & reviewer assignment</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" action="/proposals/submit/" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Section 1: Classification & Title -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-primary text-uppercase mb-3" style="font-size: 0.82rem; letter-spacing: 0.05em;">
+                <i class="bi bi-1-circle-fill me-1"></i> Scheme & Basic Details
+              </h6>
+              
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label for="category" class="form-label fw-semibold small text-secondary">Funding Call / Category <span class="text-danger">*</span></label>
+                  <select class="form-select" id="category" name="category" required onchange="updateCategoryInfo(this)">
+                    <option value="" disabled selected>-- Select an Active Grant Call --</option>
+                    {% for cat in categories %}
+                      <option value="{{ cat.id }}" data-budget="{{ cat.maximum_budget }}" data-deadline="{{ cat.deadline|default:'' }}" {% if request.GET.category|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>
+                        {{ cat.category_name }} {% if cat.maximum_budget > 0 %}(Max: ${{ cat.maximum_budget|floatformat:0 }}){% endif %}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="col-md-6">
+                  <label for="requested_budget" class="form-label fw-semibold small text-secondary">Requested Budget (USD $) <span class="text-danger">*</span></label>
+                  <div class="input-group">
+                    <span class="input-group-text bg-light text-muted">$</span>
+                    <input type="number" step="0.01" min="1" class="form-control" id="requested_budget" name="requested_budget" placeholder="e.g. 50000" required>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label for="title" class="form-label fw-semibold small text-secondary">Proposal Title <span class="text-danger">*</span></label>
+                  <input type="text" class="form-control" id="title" name="title" placeholder="Comprehensive Investigation into Automated Biomedical Diagnostics Using Transformers" required>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4 text-muted">
+
+            <!-- Section 2: Narrative Sections -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-primary text-uppercase mb-3" style="font-size: 0.82rem; letter-spacing: 0.05em;">
+                <i class="bi bi-2-circle-fill me-1"></i> Project Narrative & Research Methodology
+              </h6>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="abstract" class="form-label fw-semibold small text-secondary">Executive Abstract (Max 300 words) <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="abstract" name="abstract" rows="4" placeholder="Succinct high-level summary of the research questions, innovation, and expected deliverables..." required></textarea>
+                </div>
+
+                <div class="col-12">
+                  <label for="objectives" class="form-label fw-semibold small text-secondary">Specific Aims & Objectives <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="objectives" name="objectives" rows="4" placeholder="List itemized measurable aims and milestones (Aim 1, Aim 2, Aim 3)..." required></textarea>
+                </div>
+
+                <div class="col-12">
+                  <label for="methodology" class="form-label fw-semibold small text-secondary">Research Methodology & Technical Plan <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="methodology" name="methodology" rows="5" placeholder="Detail experimental design, data collection, analytical workflows, computational infrastructure, and validation..." required></textarea>
+                </div>
+
+                <div class="col-12">
+                  <label for="expected_impact" class="form-label fw-semibold small text-secondary">Expected Impact & Broader Significance <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="expected_impact" name="expected_impact" rows="3" placeholder="Anticipated scientific breakthroughs, societal impact, commercialization, or policy translation..." required></textarea>
+                </div>
+              </div>
+            </div>
+
+            <hr class="my-4 text-muted">
+
+            <!-- Section 3: Budget Justification & File Upload -->
+            <div class="mb-4">
+              <h6 class="fw-bold text-primary text-uppercase mb-3" style="font-size: 0.82rem; letter-spacing: 0.05em;">
+                <i class="bi bi-3-circle-fill me-1"></i> Financials & Full Narrative Attachment
+              </h6>
+
+              <div class="row g-3">
+                <div class="col-12">
+                  <label for="budget_justification" class="form-label fw-semibold small text-secondary">Budget Justification & Resource Breakdown <span class="text-danger">*</span></label>
+                  <textarea class="form-control" id="budget_justification" name="budget_justification" rows="3" placeholder="Provide detailed rationale for personnel, computing hardware, laboratory supplies, travel, and publication charges..." required></textarea>
+                </div>
+
+                <div class="col-12">
+                  <label for="proposal_file" class="form-label fw-semibold small text-secondary">
+                    Full Proposal Document Attachment <span class="text-muted">(Optional, PDF / DOCX / TXT up to 10MB)</span>
+                  </label>
+                  <input type="file" class="form-control" id="proposal_file" name="proposal_file" accept=".pdf,.docx,.txt">
+                  <div class="form-text small text-muted">
+                    <i class="bi bi-info-circle me-1"></i> Uploading a document triggers our sentence-transformers NLP engine to parse extracted text and match criteria automatically.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit CTA -->
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-4">
+              <a href="/applicant/" class="btn btn-light px-4">Cancel</a>
+              <button type="submit" class="btn btn-gradient-primary px-5 py-2">
+                <i class="bi bi-send-check me-1"></i> Submit Proposal for Review
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
