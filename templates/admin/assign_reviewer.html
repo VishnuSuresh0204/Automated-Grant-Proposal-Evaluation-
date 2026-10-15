@@ -1,0 +1,147 @@
+{% extends 'admin/commen.html' %}
+{% load static %}
+
+{% block title %}Assign Reviewers | Proposal #{{ proposal.id }} | AGPES Admin Console{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <!-- Breadcrumb & Top Bar -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+      <div>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-1 small">
+            <li class="breadcrumb-item"><a href="/admin/proposals/" class="text-decoration-none">Admin Proposals</a></li>
+            <li class="breadcrumb-item"><a href="/proposals/{{ proposal.id }}/" class="text-decoration-none">Proposal #{{ proposal.id }}</a></li>
+            <li class="breadcrumb-item active">Assign Reviewers</li>
+          </ol>
+        </nav>
+        <h4 class="fw-bold text-dark mb-0"><i class="bi bi-person-plus-fill text-primary me-2"></i> Reviewer Assignment Panel</h4>
+      </div>
+      <a href="/admin/proposals/" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Proposals
+      </a>
+    </div>
+
+    <!-- Proposal Brief Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 bg-white">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+            Proposal Reference #{{ proposal.id }}
+          </span>
+          <span class="badge bg-light text-dark border">
+            {{ proposal.category.category_name }}
+          </span>
+        </div>
+        <h5 class="fw-bold text-dark mb-2">{{ proposal.title }}</h5>
+        <div class="d-flex flex-wrap gap-4 text-muted small">
+          <span><i class="bi bi-person me-1"></i> PI: <strong>{{ proposal.applicant.username }}</strong></span>
+          <span><i class="bi bi-cash-stack me-1"></i> Budget: <strong>${{ proposal.requested_budget|floatformat:2 }}</strong></span>
+          <span><i class="bi bi-calendar3 me-1"></i> Submitted: {{ proposal.submitted_at|date:"M d, Y" }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Left: Assign New Reviewer Form -->
+      <div class="col-lg-5">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+          <div class="p-4 bg-light border-bottom">
+            <h5 class="fw-bold mb-1 text-dark"><i class="bi bi-person-check text-success me-2"></i> Assign Panelist</h5>
+            <p class="text-muted small mb-0">Select an accredited peer reviewer to assign to this submission</p>
+          </div>
+
+          <div class="card-body p-4">
+            <form method="POST" action="/admin/proposals/{{ proposal.id }}/assign/">
+              {% csrf_token %}
+
+              <div class="mb-4">
+                <label for="reviewer" class="form-label fw-semibold small text-secondary">
+                  Select Accredited Reviewer <span class="text-danger">*</span>
+                </label>
+                <select class="form-select" id="reviewer" name="reviewer" required>
+                  <option value="" disabled selected>-- Choose from Reviewer Roster --</option>
+                  {% for rev in reviewers %}
+                    <option value="{{ rev.id }}">
+                      {{ rev.username }}
+                      {% if rev.reviewer_profile and rev.reviewer_profile.specialization %}
+                        - {{ rev.reviewer_profile.specialization }} ({{ rev.reviewer_profile.experience_years }}y)
+                      {% endif %}
+                    </option>
+                  {% endfor %}
+                </select>
+                <div class="form-text small text-muted">
+                  <i class="bi bi-shield-lock me-1"></i> Double-blind review terms apply.
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100 py-2">
+                <i class="bi bi-person-plus-fill me-1"></i> Confirm & Assign Reviewer
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Current Assignments Table -->
+      <div class="col-lg-7">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+          <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+            <h5 class="fw-bold mb-0 text-dark">Assigned Reviewers ({{ assignments.count }})</h5>
+            <a href="/admin/proposals/{{ proposal.id }}/evaluations/" class="btn btn-outline-success btn-sm">
+              <i class="bi bi-mortarboard me-1"></i> View Evaluations
+            </a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="table-light small text-uppercase text-secondary">
+                <tr>
+                  <th class="ps-4">Reviewer</th>
+                  <th>Assigned Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in assignments %}
+                  <tr>
+                    <td class="ps-4 py-3">
+                      <div class="fw-bold text-dark">{{ a.reviewer.username }}</div>
+                      {% if a.reviewer.reviewer_profile %}
+                        <div class="text-muted x-small">
+                          {{ a.reviewer.reviewer_profile.specialization|default:"General Academic" }}
+                        </div>
+                      {% endif %}
+                    </td>
+                    <td class="small text-muted">
+                      {{ a.assigned_at|date:"M d, Y" }}
+                    </td>
+                    <td>
+                      {% if a.is_completed %}
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                          <i class="bi bi-check2-all me-1"></i> Completed
+                        </span>
+                      {% else %}
+                        <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                          <i class="bi bi-hourglass-top me-1"></i> Pending Score
+                        </span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="3" class="text-center py-4 text-muted small">
+                      No reviewers have been assigned to this proposal yet.
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
