@@ -1,0 +1,123 @@
+{% extends 'reviewer/commen.html' %}
+{% load static %}
+
+{% block title %}Assigned Proposals Queue | AGPES Reviewer Panel{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Top Banner -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1 small">
+          <li class="breadcrumb-item"><a href="/reviewer/" class="text-decoration-none">Reviewer Dashboard</a></li>
+          <li class="breadcrumb-item active">Assigned Proposals</li>
+        </ol>
+      </nav>
+      <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-clipboard-check text-success me-2"></i> Assigned Proposals Queue</h3>
+      <p class="text-muted small mb-0">Evaluate proposals assigned to your expert review panel under double-blind protocol</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/reviewer/" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-speedometer2 me-1"></i> Dashboard
+      </a>
+      <a href="/categories/" class="btn btn-outline-success btn-sm">
+        <i class="bi bi-briefcase me-1"></i> Active Calls
+      </a>
+    </div>
+  </div>
+
+  <!-- Proposals Table Card -->
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+      <h5 class="fw-bold mb-0 text-dark">
+        <i class="bi bi-list-task text-success me-2"></i> Review Worklist ({{ assignments.count }})
+      </h5>
+      <span class="badge bg-light text-dark border">Panelist: {{ user.username }}</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light small text-uppercase text-secondary">
+          <tr>
+            <th class="ps-4">Proposal Reference & Title</th>
+            <th>Category / Scheme</th>
+            <th>Assigned Date</th>
+            <th>Requested Budget</th>
+            <th>Evaluation Status</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for assignment in assignments %}
+            <tr>
+              <td class="ps-4 py-3">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="badge bg-success-subtle text-success border border-success-subtle">
+                    #{{ assignment.proposal.id }}
+                  </span>
+                  <div>
+                    <a href="/proposals/{{ assignment.proposal.id }}/" class="fw-bold text-dark text-decoration-none">
+                      {{ assignment.proposal.title }}
+                    </a>
+                    <div class="text-muted x-small" style="font-size: 0.78rem;">
+                      {{ assignment.proposal.abstract|truncatewords:15 }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark border">
+                  {{ assignment.proposal.category.category_name }}
+                </span>
+              </td>
+              <td class="small text-muted">
+                {{ assignment.assigned_at|date:"M d, Y" }}
+              </td>
+              <td class="fw-semibold text-dark">
+                ${{ assignment.proposal.requested_budget|floatformat:2 }}
+              </td>
+              <td>
+                {% if assignment.is_completed %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                    <i class="bi bi-check2-circle me-1"></i> Completed
+                  </span>
+                {% else %}
+                  <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                    <i class="bi bi-hourglass-top me-1"></i> Pending Score
+                  </span>
+                {% endif %}
+              </td>
+              <td class="text-end pe-4">
+                <div class="btn-group btn-group-sm">
+                  <a href="/reviewer/proposals/{{ assignment.proposal.id }}/evaluate/" class="btn {% if assignment.is_completed %}btn-outline-success{% else %}btn-success{% endif %}">
+                    <i class="bi bi-pencil-square me-1"></i> {% if assignment.is_completed %}Edit Rubric{% else %}Evaluate{% endif %}
+                  </a>
+                  <a href="/proposals/{{ assignment.proposal.id }}/" class="btn btn-outline-secondary" title="View Full Proposal">
+                    <i class="bi bi-eye"></i>
+                  </a>
+                  {% if assignment.proposal.proposal_file %}
+                    <a href="{{ assignment.proposal.proposal_file.url }}" class="btn btn-outline-secondary" download title="Download Attachment">
+                      <i class="bi bi-download"></i>
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-center py-5">
+                <div class="text-muted mb-3" style="font-size: 2.5rem;">
+                  <i class="bi bi-clipboard2-check"></i>
+                </div>
+                <h6 class="fw-bold text-dark">No Proposals Assigned Yet</h6>
+                <p class="text-muted small mb-0">You have no active grant proposal evaluation assignments assigned to your panel.</p>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
