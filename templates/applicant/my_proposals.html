@@ -1,0 +1,140 @@
+{% extends 'applicant/commen.html' %}
+{% load static %}
+
+{% block title %}My Submitted Proposals | AGPES Applicant Portal{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Top Banner -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1 small">
+          <li class="breadcrumb-item"><a href="/applicant/" class="text-decoration-none">Applicant Dashboard</a></li>
+          <li class="breadcrumb-item active">My Proposals</li>
+        </ol>
+      </nav>
+      <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-folder2-open text-primary me-2"></i> My Research Grant Proposals</h3>
+      <p class="text-muted small mb-0">Track lifecycle progress, evaluation outcomes, and AI semantic scores for your submissions</p>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="/categories/" class="btn btn-outline-secondary btn-sm">
+        <i class="bi bi-briefcase me-1"></i> Active Calls
+      </a>
+      <a href="/proposals/submit/" class="btn btn-gradient-primary btn-sm">
+        <i class="bi bi-plus-circle me-1"></i> Submit New Proposal
+      </a>
+    </div>
+  </div>
+
+  <!-- Proposals Table Card -->
+  <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+    <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+      <h5 class="fw-bold mb-0 text-dark">
+        <i class="bi bi-list-stars text-primary me-2"></i> Submission Portfolio ({{ proposals.count }})
+      </h5>
+      <span class="badge bg-light text-dark border">PI: {{ user.username }}</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light small text-uppercase text-secondary">
+          <tr>
+            <th class="ps-4">Proposal Title & Details</th>
+            <th>Category / Scheme</th>
+            <th>Requested Budget</th>
+            <th>Submitted On</th>
+            <th>Status</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for proposal in proposals %}
+            <tr>
+              <td class="ps-4">
+                <div class="d-flex align-items-center gap-2">
+                  <div class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                    #{{ proposal.id }}
+                  </div>
+                  <div>
+                    <a href="/proposals/{{ proposal.id }}/" class="fw-bold text-dark text-decoration-none hover-primary">
+                      {{ proposal.title }}
+                    </a>
+                    <div class="text-muted x-small" style="font-size: 0.78rem;">
+                      {{ proposal.abstract|truncatewords:15 }}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge bg-light text-dark border">
+                  {{ proposal.category.category_name }}
+                </span>
+              </td>
+              <td class="fw-semibold text-dark">
+                ${{ proposal.requested_budget|floatformat:2 }}
+              </td>
+              <td class="text-muted small">
+                {{ proposal.submitted_at|date:"M d, Y" }}
+              </td>
+              <td>
+                {% if proposal.status == 'Approved' %}
+                  <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                    <i class="bi bi-check-circle-fill me-1"></i> Approved
+                  </span>
+                {% elif proposal.status == 'Rejected' %}
+                  <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                    <i class="bi bi-x-circle-fill me-1"></i> Rejected
+                  </span>
+                {% elif proposal.status == 'Under Review' %}
+                  <span class="badge bg-info-subtle text-info border border-info-subtle px-2 py-1">
+                    <i class="bi bi-hourglass-split me-1"></i> Under Review
+                  </span>
+                {% elif proposal.status == 'Revision Required' %}
+                  <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                    <i class="bi bi-exclamation-circle-fill me-1"></i> Revision Required
+                  </span>
+                {% else %}
+                  <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">
+                    <i class="bi bi-clock me-1"></i> Pending
+                  </span>
+                {% endif %}
+              </td>
+              <td class="text-end pe-4">
+                <div class="btn-group btn-group-sm">
+                  <a href="/proposals/{{ proposal.id }}/" class="btn btn-outline-primary" title="View Full Proposal">
+                    <i class="bi bi-eye"></i> View
+                  </a>
+                  {% if proposal.analyses.exists %}
+                    <a href="/proposals/{{ proposal.id }}/analysis/{{ proposal.analyses.first.id }}/" class="btn btn-outline-info" title="View AI NLP Analysis">
+                      <i class="bi bi-cpu"></i> AI
+                    </a>
+                  {% endif %}
+                  {% if proposal.proposal_file %}
+                    <a href="{{ proposal.proposal_file.url }}" class="btn btn-outline-secondary" download title="Download Document">
+                      <i class="bi bi-download"></i>
+                    </a>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="6" class="text-center py-5">
+                <div class="text-muted mb-3" style="font-size: 2.5rem;">
+                  <i class="bi bi-inbox"></i>
+                </div>
+                <h6 class="fw-bold text-dark">No Proposals Submitted Yet</h6>
+                <p class="text-muted small mb-3">You haven't submitted any research grant proposals under this account.</p>
+                <a href="/proposals/submit/" class="btn btn-primary btn-sm px-4">
+                  <i class="bi bi-plus-circle me-1"></i> Submit First Proposal
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
