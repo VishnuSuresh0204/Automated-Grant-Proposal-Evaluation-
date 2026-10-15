@@ -1,0 +1,233 @@
+{% extends 'reviewer/commen.html' %}
+{% load static %}
+
+{% block title %}Evaluate Proposal #{{ proposal.id }} | AGPES Reviewer Panel{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <!-- Breadcrumb & Top Bar -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+    <div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-1 small">
+          <li class="breadcrumb-item"><a href="/reviewer/assigned/" class="text-decoration-none">Assigned Proposals</a></li>
+          <li class="breadcrumb-item active">Evaluation Rubric</li>
+        </ol>
+      </nav>
+      <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-ui-checks text-success me-2"></i> Scientific Peer Review Rubric</h3>
+      <p class="text-muted small mb-0">{{ proposal.title }}</p>
+    </div>
+
+    <div class="d-flex gap-2">
+      <a href="/proposals/{{ proposal.id }}/" class="btn btn-outline-secondary btn-sm" target="_blank">
+        <i class="bi bi-box-arrow-up-right me-1"></i> Full Proposal Details
+      </a>
+      {% if proposal.proposal_file %}
+        <a href="{{ proposal.proposal_file.url }}" class="btn btn-outline-success btn-sm" download>
+          <i class="bi bi-download me-1"></i> Download PDF
+        </a>
+      {% endif %}
+      <a href="/reviewer/assigned/" class="btn btn-secondary btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Queue
+      </a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Left Column: Proposal Summary -->
+    <div class="col-lg-5">
+      <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 bg-white sticky-top" style="top: 90px; z-index: 10;">
+        <div class="d-flex justify-content-between align-items-start mb-3">
+          <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+            {{ proposal.category.category_name }}
+          </span>
+          <span class="badge bg-light text-dark border">
+            Requested: ${{ proposal.requested_budget|floatformat:2 }}
+          </span>
+        </div>
+
+        <h5 class="fw-bold text-dark mb-3">{{ proposal.title }}</h5>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold small text-uppercase text-secondary" style="font-size: 0.75rem;">Executive Abstract</label>
+          <p class="text-muted small mb-0" style="max-height: 180px; overflow-y: auto; line-height: 1.6;">
+            {{ proposal.abstract }}
+          </p>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label fw-bold small text-uppercase text-secondary" style="font-size: 0.75rem;">Objectives</label>
+          <p class="text-muted small mb-0" style="max-height: 140px; overflow-y: auto; line-height: 1.6;">
+            {{ proposal.objectives }}
+          </p>
+        </div>
+
+        <div class="p-3 bg-light rounded-3 mt-3 border">
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="small fw-semibold text-dark">Live Composite Score:</span>
+            <span class="fs-4 fw-bold text-success" id="compositeScoreDisplay">
+              {{ evaluation.total_score|default:"0.0"|floatformat:1 }} / 10
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Evaluation Rubric Form -->
+    <div class="col-lg-7">
+      <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="p-4 bg-light border-bottom">
+          <h5 class="fw-bold mb-1 text-dark"><i class="bi bi-sliders text-success me-2"></i> Standard Multi-Dimensional Scoring Form</h5>
+          <p class="text-muted small mb-0">Grade each rubric dimension on a scale of 0.0 (Unacceptable) to 10.0 (Outstanding)</p>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+          <form method="POST" action="/reviewer/proposals/{{ proposal.id }}/evaluate/">
+            {% csrf_token %}
+
+            <!-- Innovation Score -->
+            <div class="mb-4 pb-3 border-bottom">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="innovation_score" class="form-label fw-bold text-dark mb-0">
+                  1. Novelty & Innovation
+                </label>
+                <span class="badge bg-primary fs-6 px-3 py-1" id="val_innovation">
+                  {{ evaluation.innovation_score|default:0|floatformat:1 }}
+                </span>
+              </div>
+              <p class="text-muted x-small mb-2" style="font-size: 0.8rem;">
+                Originality of concepts, theoretical uniqueness, transformational paradigm potential.
+              </p>
+              <input type="range" class="form-range score-slider" min="0" max="10" step="0.5" id="innovation_score" name="innovation_score" value="{{ evaluation.innovation_score|default:0 }}" oninput="updateScore('val_innovation', this.value)">
+            </div>
+
+            <!-- Feasibility Score -->
+            <div class="mb-4 pb-3 border-bottom">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="feasibility_score" class="form-label fw-bold text-dark mb-0">
+                  2. Scientific & Technical Feasibility
+                </label>
+                <span class="badge bg-primary fs-6 px-3 py-1" id="val_feasibility">
+                  {{ evaluation.feasibility_score|default:0|floatformat:1 }}
+                </span>
+              </div>
+              <p class="text-muted x-small mb-2" style="font-size: 0.8rem;">
+                Soundness of experimental design, institutional resources, realistic risk mitigations.
+              </p>
+              <input type="range" class="form-range score-slider" min="0" max="10" step="0.5" id="feasibility_score" name="feasibility_score" value="{{ evaluation.feasibility_score|default:0 }}" oninput="updateScore('val_feasibility', this.value)">
+            </div>
+
+            <!-- Impact Score -->
+            <div class="mb-4 pb-3 border-bottom">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="impact_score" class="form-label fw-bold text-dark mb-0">
+                  3. Broader Impact & Deliverables
+                </label>
+                <span class="badge bg-primary fs-6 px-3 py-1" id="val_impact">
+                  {{ evaluation.impact_score|default:0|floatformat:1 }}
+                </span>
+              </div>
+              <p class="text-muted x-small mb-2" style="font-size: 0.8rem;">
+                Societal relevance, open scientific translation, potential industrial/clinical breakthroughs.
+              </p>
+              <input type="range" class="form-range score-slider" min="0" max="10" step="0.5" id="impact_score" name="impact_score" value="{{ evaluation.impact_score|default:0 }}" oninput="updateScore('val_impact', this.value)">
+            </div>
+
+            <!-- Methodology Score -->
+            <div class="mb-4 pb-3 border-bottom">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="methodology_score" class="form-label fw-bold text-dark mb-0">
+                  4. Methodological Rigor & Data Quality
+                </label>
+                <span class="badge bg-primary fs-6 px-3 py-1" id="val_methodology">
+                  {{ evaluation.methodology_score|default:0|floatformat:1 }}
+                </span>
+              </div>
+              <p class="text-muted x-small mb-2" style="font-size: 0.8rem;">
+                Robustness of computational / laboratory protocols, statistical power, validation controls.
+              </p>
+              <input type="range" class="form-range score-slider" min="0" max="10" step="0.5" id="methodology_score" name="methodology_score" value="{{ evaluation.methodology_score|default:0 }}" oninput="updateScore('val_methodology', this.value)">
+            </div>
+
+            <!-- Budget Score -->
+            <div class="mb-4 pb-3 border-bottom">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="budget_score" class="form-label fw-bold text-dark mb-0">
+                  5. Budget Realism & Value for Money
+                </label>
+                <span class="badge bg-primary fs-6 px-3 py-1" id="val_budget">
+                  {{ evaluation.budget_score|default:0|floatformat:1 }}
+                </span>
+              </div>
+              <p class="text-muted x-small mb-2" style="font-size: 0.8rem;">
+                Justification of costs, appropriate allocations for personnel and equipment.
+              </p>
+              <input type="range" class="form-range score-slider" min="0" max="10" step="0.5" id="budget_score" name="budget_score" value="{{ evaluation.budget_score|default:0 }}" oninput="updateScore('val_budget', this.value)">
+            </div>
+
+            <!-- Final Recommendation Decision -->
+            <div class="mb-4">
+              <label for="decision" class="form-label fw-bold text-dark">
+                Final Recommendation Decision <span class="text-danger">*</span>
+              </label>
+              <select class="form-select form-select-lg" id="decision" name="decision" required>
+                <option value="" disabled {% if not evaluation.decision or evaluation.decision == 'Pending' %}selected{% endif %}>
+                  -- Select Funding Recommendation --
+                </option>
+                <option value="Recommend" {% if evaluation.decision == 'Recommend' %}selected{% endif %}>
+                  Recommend for Full Award
+                </option>
+                <option value="Revision Required" {% if evaluation.decision == 'Revision Required' %}selected{% endif %}>
+                  Major / Minor Revision Required
+                </option>
+                <option value="Not Recommend" {% if evaluation.decision == 'Not Recommend' %}selected{% endif %}>
+                  Do Not Recommend
+                </option>
+              </select>
+            </div>
+
+            <!-- Qualitative Reviewer Feedback -->
+            <div class="mb-4">
+              <label for="comments" class="form-label fw-bold text-dark">
+                Detailed Peer Review Critique & Justification <span class="text-danger">*</span>
+              </label>
+              <textarea class="form-control" id="comments" name="comments" rows="5" placeholder="Detail constructive strengths, critical methodological weaknesses, risks, and suggestions for the applicant..." required>{{ evaluation.comments }}</textarea>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+              <a href="/reviewer/assigned/" class="btn btn-light px-4">Cancel</a>
+              <button type="submit" class="btn btn-success px-5 py-2 fw-semibold">
+                <i class="bi bi-check2-circle me-1"></i> Submit Evaluation Rubric
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function updateScore(badgeId, value) {
+    document.getElementById(badgeId).innerText = parseFloat(value).toFixed(1);
+    calculateComposite();
+  }
+
+  function calculateComposite() {
+    const s1 = parseFloat(document.getElementById('innovation_score').value) || 0;
+    const s2 = parseFloat(document.getElementById('feasibility_score').value) || 0;
+    const s3 = parseFloat(document.getElementById('impact_score').value) || 0;
+    const s4 = parseFloat(document.getElementById('methodology_score').value) || 0;
+    const s5 = parseFloat(document.getElementById('budget_score').value) || 0;
+    const avg = ((s1 + s2 + s3 + s4 + s5) / 5).toFixed(1);
+    const display = document.getElementById('compositeScoreDisplay');
+    if (display) {
+      display.innerText = avg + " / 10";
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', calculateComposite);
+</script>
+{% endblock %}
