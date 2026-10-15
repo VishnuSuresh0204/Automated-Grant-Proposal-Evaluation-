@@ -1,0 +1,115 @@
+{% extends 'admin/commen.html' %}
+{% load static %}
+
+{% block title %}Peer Review Evaluations Roster | AGPES Admin Console{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+  <div>
+    <h4 class="fw-bold text-dark mb-1"><i class="bi bi-mortarboard-fill text-primary me-2"></i> Peer Review Evaluations Ledger</h4>
+    <p class="text-muted small mb-0">Audit completed reviewer scores, qualitative critiques, and recommendations across all proposals</p>
+  </div>
+  <div>
+    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
+      Total Evaluations: {{ evaluations.count }}
+    </span>
+  </div>
+</div>
+
+<!-- Evaluations Table Card -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+    <h5 class="fw-bold mb-0 text-dark">Completed Evaluations</h5>
+    <input type="text" id="evalSearch" class="form-control form-control-sm" placeholder="Filter reviews..." style="max-width: 250px;" onkeyup="filterEvaluations()">
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0" id="evalTable">
+      <thead class="table-light small text-uppercase text-secondary">
+        <tr>
+          <th class="ps-4">Proposal Reference</th>
+          <th>Reviewer</th>
+          <th>Scores (Inn / Feas / Imp / Meth / Bud)</th>
+          <th>Total Score</th>
+          <th>Decision</th>
+          <th>Date</th>
+          <th class="text-end pe-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for e in evaluations %}
+          <tr>
+            <td class="ps-4 py-3">
+              <a href="/proposals/{{ e.proposal.id }}/" class="fw-bold text-dark text-decoration-none">
+                #{{ e.proposal.id }} - {{ e.proposal.title|truncatewords:8 }}
+              </a>
+              <div class="text-muted x-small">
+                {{ e.proposal.category.category_name }}
+              </div>
+            </td>
+            <td>
+              <div class="fw-semibold text-dark small">{{ e.reviewer.username }}</div>
+            </td>
+            <td class="small">
+              <span class="badge bg-light text-dark border me-1" title="Innovation">{{ e.innovation_score|floatformat:1 }}</span>
+              <span class="badge bg-light text-dark border me-1" title="Feasibility">{{ e.feasibility_score|floatformat:1 }}</span>
+              <span class="badge bg-light text-dark border me-1" title="Impact">{{ e.impact_score|floatformat:1 }}</span>
+              <span class="badge bg-light text-dark border me-1" title="Methodology">{{ e.methodology_score|floatformat:1 }}</span>
+              <span class="badge bg-light text-dark border" title="Budget">{{ e.budget_score|floatformat:1 }}</span>
+            </td>
+            <td>
+              <span class="fw-bold fs-6 text-primary">{{ e.total_score|floatformat:1 }}</span>
+              <span class="text-muted x-small">/ 10</span>
+            </td>
+            <td>
+              {% if e.decision == 'Recommend' %}
+                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1">
+                  <i class="bi bi-check-circle-fill me-1"></i> Recommend
+                </span>
+              {% elif e.decision == 'Not Recommend' %}
+                <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-2 py-1">
+                  <i class="bi bi-x-circle-fill me-1"></i> Not Recommend
+                </span>
+              {% elif e.decision == 'Revision Required' %}
+                <span class="badge bg-warning-subtle text-warning border border-warning-subtle px-2 py-1">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Revision
+                </span>
+              {% else %}
+                <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1">
+                  Pending
+                </span>
+              {% endif %}
+            </td>
+            <td class="small text-muted">
+              {{ e.evaluated_at|date:"M d, Y" }}
+            </td>
+            <td class="text-end pe-4">
+              <a href="/admin/proposals/{{ e.proposal.id }}/evaluations/" class="btn btn-outline-primary btn-sm">
+                <i class="bi bi-bar-chart me-1"></i> Consensus
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-4 text-muted small">
+              No reviewer evaluations have been submitted yet.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function filterEvaluations() {
+    const q = document.getElementById("evalSearch").value.toLowerCase();
+    const rows = document.querySelectorAll("#evalTable tbody tr");
+    rows.forEach(r => {
+      r.style.display = r.innerText.toLowerCase().includes(q) ? "" : "none";
+    });
+  }
+</script>
+{% endblock %}
