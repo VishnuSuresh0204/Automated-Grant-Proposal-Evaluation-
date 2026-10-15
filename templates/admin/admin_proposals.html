@@ -1,0 +1,168 @@
+{% extends 'admin/commen.html' %}
+{% load static %}
+
+{% block title %}Grant Proposals Management | AGPES Admin Console{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+  <div>
+    <h4 class="fw-bold text-dark mb-1"><i class="bi bi-file-earmark-text-fill text-primary me-2"></i> Grant Proposals Management</h4>
+    <p class="text-muted small mb-0">Oversee proposal lifecycle, execute automated NLP screenings, and coordinate peer reviews</p>
+  </div>
+  <div class="d-flex gap-2">
+    <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
+      Total Proposals: {{ proposals.count }}
+    </span>
+  </div>
+</div>
+
+<!-- Filter Pills -->
+<div class="mb-4">
+  <div class="d-flex flex-wrap gap-2">
+    <a href="/admin/proposals/" class="btn btn-sm {% if not selected_status %}btn-primary{% else %}btn-outline-secondary bg-white{% endif %}">
+      All Proposals
+    </a>
+    {% for code, label in status_choices %}
+      <a href="/admin/proposals/?status={{ code }}" class="btn btn-sm {% if selected_status == code %}btn-primary{% else %}btn-outline-secondary bg-white{% endif %}">
+        {{ label }}
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- Proposals Table Card -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+  <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center border-bottom">
+    <h5 class="fw-bold mb-0 text-dark">Submissions Portfolio</h5>
+    <input type="text" id="proposalSearch" class="form-control form-control-sm" placeholder="Search proposals..." style="max-width: 260px;" onkeyup="filterProposals()">
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0" id="proposalsTable">
+      <thead class="table-light small text-uppercase text-secondary">
+        <tr>
+          <th class="ps-4">Proposal Reference & Title</th>
+          <th>Scheme / Category</th>
+          <th>Principal Investigator</th>
+          <th>Budget</th>
+          <th>Submitted</th>
+          <th>Status</th>
+          <th class="text-end pe-4">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for proposal in proposals %}
+          <tr>
+            <td class="ps-4 py-3">
+              <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                  #{{ proposal.id }}
+                </span>
+                <div>
+                  <a href="/proposals/{{ proposal.id }}/" class="fw-bold text-dark text-decoration-none">
+                    {{ proposal.title }}
+                  </a>
+                  <div class="text-muted x-small" style="font-size: 0.78rem;">
+                    {{ proposal.abstract|truncatewords:12 }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="badge bg-light text-dark border">
+                {{ proposal.category.category_name }}
+              </span>
+            </td>
+            <td>
+              <div class="fw-semibold text-dark small">{{ proposal.applicant.username }}</div>
+              <div class="text-muted x-small">{{ proposal.applicant.email }}</div>
+            </td>
+            <td class="fw-semibold text-dark">
+              ${{ proposal.requested_budget|floatformat:2 }}
+            </td>
+            <td class="text-muted small">
+              {{ proposal.submitted_at|date:"M d, Y" }}
+            </td>
+            <td>
+              <div class="dropdown">
+                {% if proposal.status == 'Approved' %}
+                  <button class="btn btn-sm btn-success dropdown-toggle py-1 px-2 x-small" type="button" data-bs-toggle="dropdown">
+                    Approved
+                  </button>
+                {% elif proposal.status == 'Rejected' %}
+                  <button class="btn btn-sm btn-danger dropdown-toggle py-1 px-2 x-small" type="button" data-bs-toggle="dropdown">
+                    Rejected
+                  </button>
+                {% elif proposal.status == 'Under Review' %}
+                  <button class="btn btn-sm btn-info text-white dropdown-toggle py-1 px-2 x-small" type="button" data-bs-toggle="dropdown">
+                    Under Review
+                  </button>
+                {% elif proposal.status == 'Revision Required' %}
+                  <button class="btn btn-sm btn-warning text-dark dropdown-toggle py-1 px-2 x-small" type="button" data-bs-toggle="dropdown">
+                    Revision
+                  </button>
+                {% else %}
+                  <button class="btn btn-sm btn-secondary dropdown-toggle py-1 px-2 x-small" type="button" data-bs-toggle="dropdown">
+                    Pending
+                  </button>
+                {% endif %}
+                <ul class="dropdown-menu shadow border-0 p-2">
+                  <li class="dropdown-header x-small text-muted">Update Lifecycle Status</li>
+                  {% for s_code, s_label in status_choices %}
+                    <li>
+                      <form method="POST" action="/admin/proposals/{{ proposal.id }}/status/">
+                        {% csrf_token %}
+                        <input type="hidden" name="status" value="{{ s_code }}">
+                        <button type="submit" class="dropdown-item small py-1 {% if proposal.status == s_code %}active{% endif %}">
+                          {{ s_label }}
+                        </button>
+                      </form>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </td>
+            <td class="text-end pe-4">
+              <div class="btn-group btn-group-sm">
+                <a href="/proposals/{{ proposal.id }}/" class="btn btn-outline-primary" title="View Full Proposal">
+                  <i class="bi bi-eye"></i>
+                </a>
+                <form method="POST" action="/admin/proposals/{{ proposal.id }}/analyze/" class="d-inline">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-outline-info" title="Run AI Semantic Analysis">
+                    <i class="bi bi-cpu"></i>
+                  </button>
+                </form>
+                <a href="/admin/proposals/{{ proposal.id }}/assign/" class="btn btn-outline-success" title="Assign Reviewers">
+                  <i class="bi bi-person-plus"></i>
+                </a>
+                <a href="/admin/proposals/{{ proposal.id }}/evaluations/" class="btn btn-outline-secondary" title="Review Consensus">
+                  <i class="bi bi-mortarboard"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="text-center py-4 text-muted small">
+              No grant proposals matching selected filter criteria.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function filterProposals() {
+    const query = document.getElementById("proposalSearch").value.toLowerCase();
+    const rows = document.querySelectorAll("#proposalsTable tbody tr");
+    rows.forEach(r => {
+      r.style.display = r.innerText.toLowerCase().includes(query) ? "" : "none";
+    });
+  }
+</script>
+{% endblock %}
