@@ -146,23 +146,23 @@
       <div class="collapse navbar-collapse" id="applicantNav">
         <ul class="navbar-nav me-auto ms-lg-4">
           <li class="nav-item">
-            <a class="nav-link nav-link-applicant active" href="/applicant/"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+            <a class="nav-link nav-link-applicant {% if request.resolver_match.url_name == 'applicant_home' %}active{% endif %}" href="/applicant/"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-applicant" href="/applicant/#proposals"><i class="bi bi-file-earmark-text me-1"></i> My Proposals</a>
+            <a class="nav-link nav-link-applicant {% if request.resolver_match.url_name == 'my_proposals' %}active{% endif %}" href="/proposals/my/"><i class="bi bi-file-earmark-text me-1"></i> My Proposals</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-applicant" href="/#grants"><i class="bi bi-briefcase me-1"></i> Funding Calls</a>
+            <a class="nav-link nav-link-applicant {% if request.resolver_match.url_name == 'grant_categories' %}active{% endif %}" href="/categories/"><i class="bi bi-briefcase me-1"></i> Funding Categories</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link nav-link-applicant" href="/#about"><i class="bi bi-info-circle me-1"></i> Evaluation Guidelines</a>
+            <a class="nav-link nav-link-applicant {% if request.resolver_match.url_name == 'user_profile' %}active{% endif %}" href="/profile/"><i class="bi bi-person-circle me-1"></i> Profile</a>
           </li>
         </ul>
 
         <div class="d-flex align-items-center gap-2">
-          <button class="btn btn-gradient-primary btn-sm px-3" data-bs-toggle="modal" data-bs-target="#newProposalModal">
+          <a href="/proposals/submit/" class="btn btn-gradient-primary btn-sm px-3">
             <i class="bi bi-plus-circle me-1"></i> Submit Proposal
-          </button>
+          </a>
           <a href="/logout/" class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i></a>
         </div>
       </div>
