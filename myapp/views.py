@@ -464,6 +464,10 @@ def admin_home(request):
 def user_profile(request):
     user = request.user
 
+    if is_admin(user):
+        messages.info(request, "Administrators manage the portal from the Admin Console.")
+        return redirect("admin_home")
+
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
 
